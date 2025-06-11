@@ -17,6 +17,14 @@
 * 前端框架：Vue 3.4.38 + typescript 5.4.2,
 * UI框架: element-plus 2.8.5
 
+# 交流与支持
+	微信 k1161095164
+	邮箱 1161095164@qq.com
+
+# 测试环境体验
+	http://47.101.175.183:88/login
+	账号 admin 密码 admin
+	
 # 开发环境
 建议开发者使用以下环境，可以避免版本带来的问题
 * IDE: IntelliJ IDEA 2019.2+和HBuilder X最新版
