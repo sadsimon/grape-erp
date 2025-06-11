@@ -3,11 +3,11 @@
 * 各位有行业经验的可以提出宝贵意见
 
 
-![输入图片说明](grape-admin/public/images/1.jpg)
+![输入图片说明](grape-admin/public/images/1.png)
 
-![输入图片说明](grape-admin/public/images/2.jpg)
+![输入图片说明](grape-admin/public/images/2.png)
 
-![输入图片说明](grape-admin/public/images/3.jpg)
+![输入图片说明](grape-admin/public/images/3.png)
 
 
 # 技术框架
