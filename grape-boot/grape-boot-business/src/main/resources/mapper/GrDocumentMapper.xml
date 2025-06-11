@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.grape.order.mapper.GrDocumentMapper">
+
+    <select id="getDocumentList" resultType="net.grape.order.vo.GrDocumentVO">
+        SELECT
+        r.contactunits_name,
+        er.real_name,
+        cer.real_name creator_name,
+        t.*
+        FROM
+        gr_document t
+        LEFT JOIN gr_contactunits r ON t.contactunits_id = r.id and r.deleted = 0
+        LEFT JOIN sys_user er ON t.user_id = er.id and er.deleted = 0
+        LEFT JOIN sys_user cer ON t.creator = cer.id and cer.deleted = 0
+        WHERE
+        t.deleted = 0
+
+        <if test="contactunitsId != null">
+            and t.contactunits_id = #{contactunitsId}
+        </if>
+
+        <if test="userId != null">
+            and t.user_id = #{userId}
+        </if>
+
+        <if test="types != null and !types.isEmpty()">
+            and t.document_type IN
+            <foreach item="type" collection="types" open="(" separator="," close=")">
+                #{type}
+            </foreach>
+        </if>
+
+        <if test="documentTimeStart != null">
+            and t.document_time >= STR_TO_DATE(#{documentTimeStart}, '%Y-%m-%d %H:%i:%s')
+        </if>
+
+        <if test="documentTimeEnd != null">
+            and t.document_time &lt;= STR_TO_DATE(#{documentTimeEnd}, '%Y-%m-%d %H:%i:%s')
+        </if>
+        <if test="module == 'settlement' ">
+            and t.document_type IN ('32', '34', '36', '37')
+        </if>
+        <if test="module == 'purchase' ">
+            and t.document_type IN ('01', '02', '03')
+        </if>
+        <if test="module == 'sale' ">
+            and t.document_type IN ('11', '12', '13', '14')
+        </if>
+        <if test="module == 'stock' ">
+            and t.document_type IN ('21', '22', '23', '24')
+        </if>
+        order by t.document_time desc
+    </select>
+
+    <select id="checkList" resultType="net.grape.order.vo.GrDocumentVO">
+        SELECT
+        r.contactunits_name,
+        er.real_name,
+        t.*
+        FROM
+        gr_document t
+        LEFT JOIN gr_contactunits r ON t.contactunits_id = r.id and r.deleted = 0
+        LEFT JOIN sys_user er ON t.user_id = er.id and er.deleted = 0
+        WHERE
+        t.deleted = 0
+
+        <if test="documentCode != null and documentCode.trim() != ''">
+            and t.document_code like CONCAT('%', #{documentCode}, '%')
+        </if>
+
+        <if test="contactunitsId != null">
+            and t.contactunits_id = #{contactunitsId}
+        </if>
+
+        <if test="types != null and !types.isEmpty()">
+            and t.document_type IN
+            <foreach item="type" collection="types" open="(" separator="," close=")">
+                #{type}
+            </foreach>
+        </if>
+
+        <if test="documentTimeStart != null">
+            and t.document_time >= STR_TO_DATE(#{documentTimeStart}, '%Y-%m-%d %H:%i:%s')
+        </if>
+
+        <if test="documentTimeEnd != null">
+            and t.document_time &lt;= STR_TO_DATE(#{documentTimeEnd}, '%Y-%m-%d %H:%i:%s')
+        </if>
+
+    </select>
+
+    <select id="getSumAmount" resultType="Map">
+        select sum(t.final_amount) should_amount from gr_document t
+        where t.deleted = 0
+        <if test="contactunitsId != null">
+            and t.contactunits_id = #{contactunitsId}
+        </if>
+
+        <if test="amountType != null">
+            and t.amount_type = #{amountType}
+        </if>
+    </select>
+</mapper>

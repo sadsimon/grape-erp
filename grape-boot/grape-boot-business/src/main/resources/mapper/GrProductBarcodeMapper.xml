@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.grape.product.mapper.GrProductBarcodeMapper">
+    <select id="getList" resultType="net.grape.product.vo.GrProductBarcodeVO">
+        SELECT
+            e.*, t.`name` AS unit_name,
+            t.model, t.type, t.capacity
+        FROM
+            gr_product_barcode e
+                LEFT JOIN gr_unit t ON e.unit_id = t.id
+                AND t.deleted = 0
+        WHERE e.deleted = 0
+
+        <if test="productId != null">
+            and e.product_id = #{productId}
+        </if>
+        order by t.model
+    </select>
+
+    <select id="checkList" resultType="net.grape.product.vo.GrProductBarcodeCheckVO">
+        SELECT
+            e.*, t.`name`,
+            t.number,
+            t.specs,
+            k.stock_count,
+            y.category_name,
+            d.brand_name,
+            ut.`name` unit_name,
+            t.default_store_id store_id
+        FROM
+            gr_product_barcode e
+                LEFT JOIN gr_product t ON e.product_id = t.id AND t.deleted = 0
+                LEFT JOIN gr_current_stock k on k.product_id = t.id AND k.deleted = 0
+                LEFT JOIN gr_contactunits r ON t.default_contactunits_id = r.id
+                AND r.deleted = 0
+                LEFT JOIN gr_brand d ON t.brand_id = d.id
+                AND d.deleted = 0
+                LEFT JOIN gr_product_category y ON y.id = t.category_id
+                AND y.deleted = 0
+                LEFT JOIN gr_unit ut ON ut.id = e.unit_id
+                AND ut.deleted = 0
+        WHERE
+            e.deleted = 0
+
+        <if test="param != null and param.trim() != ''">
+            and (t.number like CONCAT('%', #{param}, '%')
+            or t.`name` like CONCAT('%', #{param}, '%')
+            or e.barcode like CONCAT('%', #{param}, '%')
+            or t.specs like CONCAT('%', #{param}, '%')
+            or r.contactunits_name like CONCAT('%', #{param}, '%')
+            or d.brand_name like CONCAT('%', #{param}, '%')
+            )
+        </if>
+        <if test="storeId != null" >
+            and k.store_id = #{storeId}
+        </if>
+        <if test="categoryIdList != null and !categoryIdList.isEmpty()">
+            and t.category_id IN
+            <foreach item="id" collection="categoryIdList" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="checkListNoStoreId" resultType="net.grape.product.vo.GrProductBarcodeCheckVO">
+        SELECT
+        e.*, t.`name`,
+        t.number,
+        t.specs,
+        k.stock_count,
+        y.category_name,
+        d.brand_name,
+        ut.`name` unit_name,
+        t.default_store_id store_id
+        FROM
+        gr_product_barcode e
+        LEFT JOIN gr_product t ON e.product_id = t.id AND t.deleted = 0
+        LEFT JOIN (SELECT kk.product_id, sum(kk.stock_count) as stock_count  from gr_current_stock kk WHERE kk.deleted = 0 group by kk.product_id) k on k.product_id = t.id
+        LEFT JOIN gr_contactunits r ON t.default_contactunits_id = r.id
+        AND r.deleted = 0
+        LEFT JOIN gr_brand d ON t.brand_id = d.id
+        AND d.deleted = 0
+        LEFT JOIN gr_product_category y ON y.id = t.category_id
+        AND y.deleted = 0
+        LEFT JOIN gr_unit ut ON ut.id = e.unit_id
+        AND ut.deleted = 0
+        WHERE
+        e.deleted = 0
+
+        <if test="param != null and param.trim() != ''">
+            and (t.number like CONCAT('%', #{param}, '%')
+            or t.`name` like CONCAT('%', #{param}, '%')
+            or e.barcode like CONCAT('%', #{param}, '%')
+            or t.specs like CONCAT('%', #{param}, '%')
+            or r.contactunits_name like CONCAT('%', #{param}, '%')
+            or d.brand_name like CONCAT('%', #{param}, '%')
+            )
+        </if>
+        <if test="categoryIdList != null and !categoryIdList.isEmpty()">
+            and t.category_id IN
+            <foreach item="id" collection="categoryIdList" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="getByBarcode" resultType="net.grape.product.vo.GrProductBarcodeCheckVO">
+        SELECT
+        e.*, t.`name`,
+        t.number,
+        t.specs,
+        y.category_name,
+        d.brand_name,
+        ut.`name` unit_name,
+        t.default_store_id store_id
+        FROM
+        gr_product_barcode e
+        LEFT JOIN gr_product t ON e.product_id = t.id AND t.deleted = 0
+        LEFT JOIN gr_contactunits r ON t.default_contactunits_id = r.id
+        AND r.deleted = 0
+        LEFT JOIN gr_brand d ON t.brand_id = d.id
+        AND d.deleted = 0
+        LEFT JOIN gr_product_category y ON y.id = t.category_id
+        AND y.deleted = 0
+        LEFT JOIN gr_unit ut ON ut.id = e.unit_id
+        AND ut.deleted = 0
+        WHERE
+        e.deleted = 0
+
+        <if test="barcode != null and barcode.trim() != ''">
+            and e.barcode = #{barcode}
+        </if>
+
+    </select>
+
+    <select id="getListByBarcode" resultType="net.grape.product.vo.GrProductBarcodeCheckVO">
+        SELECT
+        e.*, t.`name`,
+        t.number,
+        t.specs,
+        y.category_name,
+        d.brand_name,
+        ut.`name` unit_name
+        FROM
+        gr_product_barcode e
+        LEFT JOIN gr_product t ON e.product_id = t.id AND t.deleted = 0
+        LEFT JOIN gr_contactunits r ON t.default_contactunits_id = r.id
+        AND r.deleted = 0
+        LEFT JOIN gr_brand d ON t.brand_id = d.id
+        AND d.deleted = 0
+        LEFT JOIN gr_product_category y ON y.id = t.category_id
+        AND y.deleted = 0
+        LEFT JOIN gr_unit ut ON ut.id = e.unit_id
+        AND ut.deleted = 0
+        WHERE
+        e.deleted = 0
+
+        <if test="barcode != null and barcode.trim() != ''">
+            and e.barcode like CONCAT('%', #{param}, '%')
+        </if>
+
+    </select>
+</mapper>

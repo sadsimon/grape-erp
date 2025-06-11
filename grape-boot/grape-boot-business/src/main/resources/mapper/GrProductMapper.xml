@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.grape.product.mapper.GrProductMapper">
+
+    <select id="getList" resultType="net.grape.product.vo.ProductVO">
+        SELECT
+        t.*,
+        y.category_name,
+        ut.`name` as unit_name,
+        d.brand_name,
+        e.discount_rate,
+        se.store_name,
+        e.retail_price,
+        e.wholesale_price,
+        e.membership_price
+        FROM
+        gr_product t
+        LEFT JOIN (SELECT de.* from gr_product_barcode de,gr_unit ut WHERE de.unit_id = ut.id and ut.type = 0 ) e ON t.id = e.product_id
+        AND e.deleted = 0
+        LEFT JOIN gr_contactunits r ON t.default_contactunits_id = r.id
+        AND r.deleted = 0
+        LEFT JOIN gr_brand d ON t.brand_id = d.id
+        AND d.deleted = 0
+        LEFT JOIN gr_product_category y ON y.id = t.category_id
+        AND y.deleted = 0
+        LEFT JOIN gr_unit ut ON ut.id = t.unit_id
+        AND ut.deleted = 0
+        LEFT JOIN gr_store se ON se.id = t.default_store_id
+        AND se.deleted = 0
+        WHERE
+        t.deleted = 0
+
+        <if test="param != null and param.trim() != ''">
+            and (t.number like CONCAT('%', #{param}, '%')
+            or t.`name` like CONCAT('%', #{param}, '%')
+            or e.barcode like CONCAT('%', #{param}, '%')
+            or t.specs like CONCAT('%', #{param}, '%')
+            or r.contactunits_name like CONCAT('%', #{param}, '%')
+            or d.brand_name like CONCAT('%', #{param}, '%')
+            )
+        </if>
+
+        <if test="categoryIdList != null and !categoryIdList.isEmpty()">
+            and t.category_id IN
+            <foreach item="id" collection="categoryIdList" open="(" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>

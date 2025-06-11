@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.grape.product.mapper.GrUnitMapper">
+
+    <select id="getUnitList" resultType="net.grape.product.vo.GrUnitVO">
+        select * from gr_unit t where t.deleted = 0 and t.pid is null
+
+        <if test="model != null">
+            and t.model = #{model}
+        </if>
+    </select>
+
+</mapper>

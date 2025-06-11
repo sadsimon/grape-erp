@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.grape.product.mapper.GrProductStockMapper">
+
+    <select id="getList" resultType="net.grape.product.vo.ProductStockVO">
+        SELECT
+            e.store_name,
+            k.product_id,
+            k.id,
+            e.id store_id,
+            k.stock_count,
+            k.max_stock_count,
+            k.min_stock_count,
+            k.tenant_id,
+            k.version,
+            k.deleted,
+            k.creator,
+            k.create_time,
+            k.updater,
+            k.update_time
+
+        FROM
+            gr_product_stock k
+                RIGHT JOIN gr_store e ON e.id = k.store_id
+                AND k.deleted = 0 and k.product_id = #{productId}
+        where e.deleted = 0 and e.state = 1
+    </select>
+
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.grape.order.mapper.GrDocumentDetailMapper">
+
+    <select id="getlist" resultType="net.grape.order.vo.GrDocumentDetailVO">
+        SELECT
+        t. NAME product_name,
+        t.number product_number,
+        ut.`name` unitName,
+        e.store_name,
+        l.*
+        FROM
+        gr_document_detail l
+        LEFT JOIN gr_product t ON l.product_id = t.id and t.deleted = 0
+        LEFT JOIN gr_unit ut ON l.unit_id = ut.id and ut.deleted = 0
+        LEFT JOIN gr_store e ON l.store_id = e.id and e.deleted = 0
+        WHERE
+        l.deleted = 0
+
+        <if test="documentCode != null and documentCode.trim() != ''">
+            and l.document_code = #{documentCode}
+        </if>
+
+        <if test="documentId != null">
+            and l.document_id = #{documentId}
+        </if>
+
+    </select>
+
+</mapper>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.grape.report.mapper.ReportMapper">
+
+    <select id="getHomeData" resultType="java.util.Map">
+        SELECT
+            <if test="productId != null">
+                l.product_id,
+            </if>
+
+            COALESCE(SUM(CASE WHEN t.document_type = '13' THEN t.final_amount ELSE 0 END), 0) AS sale_amount,
+            COALESCE(SUM(CASE WHEN t.document_type = '13' THEN 1 ELSE 0 END), 0) AS sale_count,
+            COALESCE(SUM(CASE WHEN t.document_type = '14' THEN t.final_amount ELSE 0 END), 0) AS return_amount,
+            COALESCE(SUM(CASE WHEN t.document_type = '14' THEN 1 ELSE 0 END), 0) AS return_count
+        FROM
+            gr_document t
+        WHERE
+            t.document_type IN ('13', '14')
+          AND t.deleted = 0
+
+        <if test="productId != null">
+            and l.product_id = #{productId}
+        </if>
+
+        <if test="documentTimeStart != null">
+            and t.document_time >= #{documentTimeStart}
+        </if>
+
+        <if test="documentTimeEnd != null">
+            and t.document_time &lt;= #{documentTimeEnd}
+        </if>
+    </select>
+
+    <select id="getCost" resultType="java.util.Map">
+        SELECT l.product_id,
+               COALESCE(SUM(CASE WHEN t.document_type = '02' THEN l.amount ELSE -l.amount END), 0) /
+               COALESCE(SUM(CASE WHEN t.document_type = '02' THEN l.quantity ELSE -l.quantity END), 0) as cost
+        FROM
+            gr_document_detail l
+                LEFT JOIN
+            gr_document t
+            ON
+                l.document_code = t.document_code AND t.deleted = 0
+        WHERE
+            t.document_type IN ('02', '03')
+            AND l.deleted = 0
+        <if test="productId != null">
+            and l.product_id = #{productId}
+        </if>
+
+        <if test="documentTimeStart != null">
+            and t.document_time >= #{documentTimeStart}
+        </if>
+
+        <if test="documentTimeEnd != null">
+            and t.document_time &lt;= #{documentTimeEnd}
+        </if>
+
+        GROUP BY l.product_id
+    </select>
+
+    <select id="getSaleCountProduct" resultType="java.util.Map">
+        SELECT l.product_id,
+               COALESCE(SUM(l.quantity), 0) quantity
+        FROM
+            gr_document_detail l
+                LEFT JOIN
+            gr_document t
+            ON
+                l.document_code = t.document_code AND t.deleted = 0
+        WHERE
+             l.deleted = 0
+
+            <if test="documentType != null and documentType.trim() != ''">
+                and t.document_type = #{documentType}
+            </if>
+
+            <if test="documentTimeStart != null">
+                and t.document_time >= #{documentTimeStart}
+            </if>
+
+            <if test="documentTimeEnd != null">
+                and t.document_time &lt;= #{documentTimeEnd}
+            </if>
+
+        GROUP BY l.product_id
+    </select>
+    <select id="saleAmountLine" resultType="java.util.Map">
+        SELECT
+            <if test="type == 'today'">
+                DATE_FORMAT(t.document_time, '%k') as document_time,
+            </if>
+            <if test="type == 'week'">
+                WEEKDAY(t.document_time) + 1 as document_time,
+            </if>
+            <if test="type == 'month'">
+                DATE_FORMAT(t.document_time, '%e') as document_time,
+            </if>
+            <if test="type == 'year'">
+                DATE_FORMAT(t.document_time, '%c') as document_time,
+            </if>
+            (SUM(CASE WHEN t.document_type = '13' THEN t.final_amount ELSE 0 END) - SUM(CASE WHEN t.document_type = '14' THEN t.final_amount ELSE 0 END)) AS sale_amount,
+            SUM(CASE WHEN t.document_type = '13' THEN 1 ELSE 0 END) AS amount_count,
+            SUM(CASE WHEN t.document_type = '14' THEN t.final_amount ELSE 0 END) AS return_amount,
+            SUM(CASE WHEN t.document_type = '14' THEN 1 ELSE 0 END) AS return_count
+        FROM
+            gr_document t
+        WHERE
+            t.document_type IN ('13', '14')
+            AND t.deleted = 0
+
+            <if test="documentTimeStart != null">
+                and t.document_time >= #{documentTimeStart}
+            </if>
+
+            <if test="documentTimeEnd != null">
+                and t.document_time &lt;= #{documentTimeEnd}
+            </if>
+
+        GROUP BY
+
+        <if test="type == 'today'">
+            DATE_FORMAT(t.document_time, '%k')
+        </if>
+
+        <if test="type == 'week'">
+            WEEKDAY(t.document_time)
+        </if>
+
+        <if test="type == 'month'">
+            DATE_FORMAT(t.document_time, '%e')
+        </if>
+
+        <if test="type == 'year'">
+            DATE_FORMAT(t.document_time, '%c')
+        </if>
+
+    </select>
+</mapper>

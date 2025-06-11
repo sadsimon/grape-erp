@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.grape.product.mapper.GrIncomeExpendMapper">
+
+    <select id="getList" resultType="net.grape.product.vo.GrIncomeExpendVO">
+        SELECT
+        d.*
+        FROM
+        gr_income_expend d
+        WHERE
+        d.deleted = 0
+
+        <if test="param != null and param.trim() != ''">
+            and (d.name like CONCAT('%', #{param}, '%')
+            )
+        </if>
+
+    </select>
+
+</mapper>

@@ -1,0 +1,23 @@
+package net.grape.product.vo;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import net.grape.framework.common.utils.TreeNode;
+
+import java.io.Serializable;
+
+@Data
+@EqualsAndHashCode(callSuper = true)
+@Schema(description = "商品分类")
+public class ProductCategoryVO extends TreeNode<ProductCategoryVO> implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    @Schema(description = "类别名称")
+    @NotBlank(message = "类别名称不能为空")
+    private String categoryName;
+
+    @Schema(description = "上级类别名称")
+    private String parentName;
+}

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.grape.order.mapper.GrDocumentAccountDetailMapper">
+
+    <select id="getlistByDocumentId" resultType="net.grape.order.vo.GrDocumentAccountDetailVO">
+        SELECT
+        t.account_name,
+        l.*
+        FROM
+        gr_document_account_detail l
+        LEFT JOIN gr_settlement_account t ON l.account_id = t.id and t.deleted = 0
+        WHERE
+        l.deleted = 0
+
+        <if test="documentId != null">
+            and l.document_id = #{documentId}
+        </if>
+    </select>
+
+    <select id="getlistByDocumentCode" resultType="net.grape.order.vo.GrDocumentAccountDetailVO">
+        SELECT
+        t.account_name,
+        l.*
+        FROM
+        gr_document_account_detail l
+        LEFT JOIN gr_settlement_account t ON l.account_id = t.id and t.deleted = 0
+        WHERE
+        l.deleted = 0
+
+        <if test="documentCode != null and documentCode.trim() != ''">
+            and l.document_code = #{documentCode}
+        </if>
+    </select>
+
+    <select id="getSumPayAmount">
+        SELECT
+        sum(l.amount) pay_amount
+        FROM
+        gr_document_account_detail l,
+        gr_document t
+        WHERE
+        t.id = l.document_id
+        and t.deleted = 0
+        and l.deleted = 0
+
+        <if test="contactunitsId != null">
+            and t.contactunits_id = #{contactunitsId}
+        </if>
+
+        <if test="amountType != null">
+            and t.amount_type = #{amountType}
+        </if>
+    </select>
+</mapper>
