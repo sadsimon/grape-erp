@@ -13,7 +13,7 @@ import lombok.Setter;
  * </p>
  *
  * @author 疯狂的老码
- * @since 2025-06-09
+ * @since 2025-06-12
  */
 @Getter
 @Setter
@@ -83,12 +83,7 @@ public class GrDocumentDetailEntity extends BaseEntity {
     private BigDecimal taxRate;
 
     /**
-     * 税前金额
+     * 金额
      */
     private BigDecimal amount;
-
-    /**
-     * 税后金额
-     */
-    private BigDecimal finalAmount;
 }

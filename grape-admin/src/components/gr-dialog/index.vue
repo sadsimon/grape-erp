@@ -1,12 +1,12 @@
 <template>
 	<teleport v-if="props.toTeleport && visible" :to="props.toTeleport">
-		<DialogContent :model-value="visible" :show-full="props.showFull" @close="handleClose" :width="width">
+		<DialogContent :model-value="visible" :show-full="props.showFull" @close="handleClose" :title :width="width">
 			<template v-for="(_, name) in $slots" #[name]="scope">
 				<slot :name="name" v-bind="scope" />
 			</template>
 		</DialogContent>
 	</teleport>
-	<DialogContent v-else :model-value="visible" :show-full="props.showFull" @close="handleClose" :width="width">
+	<DialogContent v-else :model-value="visible" :show-full="props.showFull" @close="handleClose" :title :width="width">
 		<template v-for="(_, name) in $slots" #[name]="scope">
 			<slot :name="name" v-bind="scope" />
 		</template>
@@ -33,6 +33,7 @@ const props = defineProps({
 		type: String,
 		default: '70%'
 	},
+	title: { type: String, default: '' },
 	toTeleport: { type: String, default: '' }
 })
 

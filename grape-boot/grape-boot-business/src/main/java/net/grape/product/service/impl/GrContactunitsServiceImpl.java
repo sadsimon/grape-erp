@@ -77,8 +77,9 @@ public class GrContactunitsServiceImpl extends BaseServiceImpl<GrContactunitsMap
 
     private Map<String, Object> getParams(ContactunitsQuery query) {
         Map<String, Object> params = new HashMap<>();
-        params.put("categoryId", query.getCategoryId());
+        params.put("categoryIdList", query.getCategoryIdList());
         params.put("param", query.getParam());
+        params.put("type", query.getType());
 
         // 数据权限
         params.put(Constant.DATA_SCOPE, getDataScope("t1", null));

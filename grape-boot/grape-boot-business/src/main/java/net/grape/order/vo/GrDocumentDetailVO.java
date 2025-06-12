@@ -119,16 +119,10 @@ public class GrDocumentDetailVO  implements Serializable {
     private BigDecimal taxRate;
 
     /**
-     * 税前金额
+     * 金额
      */
-    @Schema(description = "税前金额")
+    @Schema(description = "金额")
     private BigDecimal amount;
-
-    /**
-     * 税后金额
-     */
-    @Schema(description = "税后金额")
-    private BigDecimal finalAmount;
 
     /**
      * 图片列表

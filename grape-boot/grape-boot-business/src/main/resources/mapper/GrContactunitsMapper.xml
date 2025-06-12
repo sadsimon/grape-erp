@@ -48,8 +48,15 @@
             )
         </if>
 
-        <if test="categoryId != null">
-            and y.id = #{categoryId}
+        <if test="type != null and type.trim() != ''">
+            and t1.type = #{type}
+        </if>
+
+        <if test="categoryIdList != null and !categoryIdList.isEmpty()">
+            and t1.category_id IN
+            <foreach item="id" collection="categoryIdList" open="(" separator="," close=")">
+                #{id}
+            </foreach>
         </if>
     </select>
 

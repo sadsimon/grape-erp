@@ -17,7 +17,7 @@
 						      />
 					</el-form-item>
 					<el-form-item prop="contactunitsId" label="购买单位">
-						<GrContactunitsInput width="250px" :disabled="isfinish" v-model="dataForm.contactunitsId"></GrContactunitsInput>
+						<GrContactunitsInput width="250px" :disabled="isfinish" :type="'1'" :title="'购买单位'" v-model="dataForm.contactunitsId"></GrContactunitsInput>
 					</el-form-item>
 					<el-form-item prop="userId" label="经手人">
 						<MaUserInput :disabled="isfinish" v-model="dataForm.userId"></MaUserInput>

@@ -4,7 +4,7 @@
 			<el-button icon="Search" @click="visible = true"></el-button>
 		</template>
 	</el-input>
-	<GrContactunitsDialog v-if="!disabled && visible" :key="visible + ''" v-model="visible" :multiple @select="userHandle"> </GrContactunitsDialog>
+	<GrContactunitsDialog v-if="!disabled && visible" :key="visible + ''" v-model:visible="visible" :type :multiple :title @select="userHandle"> </GrContactunitsDialog>
 </template>
 
 <script setup lang="ts" name="GrContactunitsInput">
@@ -37,6 +37,14 @@ const props = defineProps({
 		type: String,
 		required: false,
 		default: '100%'
+	},
+	title: {
+		type: String,
+		required: true,
+	},
+	type: {
+		type: String,
+		required: false,
 	}
 })
 
@@ -61,7 +69,7 @@ watch(
 		immediate: true
 	}
 )
-
+		
 const emit = defineEmits(['select'])
 const userHandle = (rows: any[]) => {
 	if (props.multiple) {

@@ -40,6 +40,10 @@ defineProps({
 	toTeleport: {
 		type: String,
 		required: false
+	},
+	type: {
+		type: String,
+		required: false
 	}
 })
 const maDataSelectRef = ref<MaDataSelect | null>(null) // MaDataSelect 的 ref

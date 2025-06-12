@@ -15,7 +15,7 @@ public class CodeGenerator {
         String table = "gr_document_detail";
 
         //项目地址
-        String dir = "E:/workspsce/grape/";
+        String dir = "E:/workspace/grape-erp/";
 
         //模块名称
         String module = "order";

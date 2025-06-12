@@ -33,7 +33,7 @@ public class GrContactunitsCategoryController {
     private final IGrContactunitsCategoryService iGrContactunitsCategoryService;
 
     @GetMapping("list")
-    @Operation(summary = "商品类别列表")
+    @Operation(summary = "往来单位分类列表")
     @PreAuthorize("hasAuthority('product:grContactunitsCategory:list')")
     public Result<List<ContactunitsCategoryVO>> list() {
         List<ContactunitsCategoryVO> list = iGrContactunitsCategoryService.getContactunitsCategoryList();
