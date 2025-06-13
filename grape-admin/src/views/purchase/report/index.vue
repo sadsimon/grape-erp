@@ -185,10 +185,10 @@ const state: IHooksOptions = reactive({
 
 const activeName = ref('store')
 
-/* const addOrUpdateRef = ref()
+const addOrUpdateRef = ref()
 const addOrUpdateHandle = (id?: Number, row?: any) => {
 	addOrUpdateRef.value.init(id, row)
-} */
+}
 
 const documentDetailList = reactive<DocumentDetail[]>([]);
 const accountDetailList = reactive<AccountDetail[]>([]);

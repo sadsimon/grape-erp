@@ -16,7 +16,7 @@
 	<el-card>
 		<el-space>
 			<el-space>
-				<el-button icon="Plus" type="primary" @click="addOrUpdateHandle(false)">新增</el-button>
+				<el-button icon="Plus" type="primary" @click="addOrUpdateHandle()">新增</el-button>
 			</el-space>
 			<el-space>
 				<el-button icon="Delete" plain type="danger" @click="deleteBatchHandle()">批量删除</el-button>

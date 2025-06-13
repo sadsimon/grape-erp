@@ -198,12 +198,8 @@
 		
 	}
 	
-	onMounted(() => {
-		init()
-	})
-	
 	const addNext =() => {
-		init()
+		init(false)
 	}
 	
 	const copyNext =() =>{
