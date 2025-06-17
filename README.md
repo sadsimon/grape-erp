@@ -1,3 +1,4 @@
+<p align="center"><img width="100" src="grape-admin/public/favicon.ico" alt="Excelize logo"></p>
 # 项目总描述
 * 项目还在初级阶段，目前正在收集需求和快速的迭代产品中
 * 各位有行业经验的可以提出宝贵意见
