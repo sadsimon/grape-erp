@@ -4,7 +4,7 @@
 		      <slot name="prefix"></slot>
 		    </template>
 		<template #default>
-			<el-option v-for="item in data" :key="item[props.value]" :label="item[props.label]" :value="item[props.value]" @click="handleOptionClick(item)"></el-option>
+			<el-option v-for="item in data" :key="item[props.value]" :label="item[props.label]" :value="item[props.value]" @click="handleOptionClick()"></el-option>
 		</template>
 		
 	</el-select>
@@ -14,13 +14,20 @@
 import { PropType, ref, watch } from 'vue'
 import { useDataApi } from '@/api/common'
 
+// 定义选项的接口
+interface Option {
+  [key: string]: any; // 或者更具体的类型
+  id: string | number; // 假设每个选项都有一个 id
+  name: string; // 假设每个选项都有一个 name
+}
+
 interface Prop {
 	value: any
 	label: string
 }
 const prop = defineProps({
 	data: {
-		type: Array,
+		type: Array as PropType<Option[]>,
 		default: () => []
 	},
 	props: {
@@ -57,7 +64,7 @@ const change = (value: any)=>{
 
 const selectedValue = ref(null)
 // 处理选项点击事件
-const handleOptionClick = (item: any) => {
+const handleOptionClick = () => {
   selectedValue.value = null // 清除选中的值
 }
 

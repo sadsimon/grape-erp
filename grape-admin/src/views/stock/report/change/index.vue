@@ -216,7 +216,25 @@ const queryDataList =() =>{
 	getDataList()
 }
 
-	
+const addDocumentType = ref([
+  { "id": '21', "name": "调拨单" },
+  { "id": '22', "name": "其他入库单" },
+  { "id": '23', "name": "其他出库单" },
+])
+
+const addDocumentUrl = (data: any) =>{
+	let path
+	if(data.id === '21'){
+		path = '/stock/allot/index'
+		
+	}else if(data.id === '22'){
+		path = '/stock/otherIn/index'
+		
+	}else if(data.id === '23'){
+		path = '/stock/otherOut/index'
+	}
+	router.push({path})
+}	
 
 const { getDataList, sizeChangeHandle, selectionChangeHandle, sortChangeHandle, currentChangeHandle, deleteBatchHandle, reset } = useCrud(state)
 </script>
