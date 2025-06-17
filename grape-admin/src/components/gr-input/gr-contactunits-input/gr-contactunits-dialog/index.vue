@@ -1,5 +1,5 @@
 <template>
-	<GrDialog :title to-teleport="#dialog-container" :model-value="visible"  draggable @close="handleClose">
+	<GrDialog :title :model-value="visible"  draggable @close="handleClose">
 		<el-card class="layout-query">
 			<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList">
 				<el-form-item style="width: 400px" prop="param">
