@@ -347,14 +347,9 @@
 	
 	const tableData = [
 		{
-			name: 'grape-boot',
-			url: 'https://gitee.com/crazy-code/grape-boot',
+			name: 'grape-erp',
+			url: 'https://gitee.com/crazy-code/grape-erp',
 			intro: '企业级ERP，使用门槛极低。'
-		},
-		{
-			name: 'grape-admin',
-			url: 'https://gitee.com/crazy-code/grape-admin',
-			intro: 'grape-boot的前端工程，采用Vue3、TypeScript、ElementPlus、Vite等开发。'
 		}
 	]
 </script>
