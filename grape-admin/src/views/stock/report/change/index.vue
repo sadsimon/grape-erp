@@ -6,7 +6,7 @@
 					<el-form-item prop="documentCode" label="单据编号">
 						<el-input v-model="state.queryForm.documentCode"></el-input>
 					</el-form-item>
-					<el-form-item prop="contactunitsId" label="供应商">
+					<el-form-item prop="contactunitsId" label="往来单位">
 						<GrContactunitsInput v-model="state.queryForm.contactunitsId" readonly></GrContactunitsInput>
 					</el-form-item>
 					<el-form-item prop="userId" label="经手人">
@@ -23,10 +23,9 @@
 					</el-form-item>
 					<el-form-item prop="types" label="单据类型">
 						<el-select v-model="state.queryForm.types" multiple style="width: 240px" >
-							  <el-option label="支出单" value="36" />
-							  <el-option label="收入单" value="37" />
-							  <el-option label="收款单" value="34" />
-							  <el-option label="付款单" value="32" />
+							  <el-option label="调拨单" value="21" />
+							  <el-option label="其他入库单" value="22" />
+							  <el-option label="其他出库单" value="23" />
 						</el-select>
 					</el-form-item>
 					<el-form-item>
@@ -76,6 +75,7 @@
 					<el-table-column prop="contactunitsName" label="供货单位" header-align="center" align="center" />
 					<el-table-column prop="realName" label="经手人" header-align="center" align="center" />
 					<el-table-column prop="creatorName" label="制单人" header-align="center" align="center" />
+					
 					<el-table-column prop="finalAmount" label="采购金额" header-align="center" align="center" />
 				</el-table>
 				<el-pagination
@@ -92,22 +92,38 @@
 						<div style="width: 100%"></div>
 						
 			</el-card>
-			<GrDocumentFoot @isArrowUp="isArrowUpFu" height="220" maxHeight="300" >
+			<GrDocumentFoot @isArrowUp="isArrowUpFu" :height="220" maxHeight="300" >
 				<el-tabs v-model="activeName" type="card">
-					<el-tab-pane label="付款情况" name="settlement">
-						<el-table border :data="accountDetailList" height="186px">
-							<el-table-column width="200px" prop="accountName" label="付款账户" header-align="center" align="center" />
-							<el-table-column width="200px" prop="amount" label="付款金额" header-align="center" align="center" />
-							<el-table-column width="350px" prop="remark" label="备注" header-align="center" align="center" />
+					<el-tab-pane label="商品明细" name="store">
+						<el-table border :data="documentDetailList" height="186px">
+							<el-table-column prop="img" label="图片" class-name="column-image" header-align="center" align="center">
+								<template #default="scope">
+									<el-popover v-if="scope.row['imgList'][0]" placement="right" :width="278">
+										<template #reference>
+											<el-image style="width: 32px; height: 32px" :src="scope.row['imgList'][0]" fit="contain" />
+										</template>
+										<el-image style="width: 250px; height: 250px" :src="scope.row['imgList'][0]" fit="contain" />
+									</el-popover>
+								</template>
+							</el-table-column>
+							<el-table-column prop="productName" label="商品名称" header-align="center" align="center" />
+							<el-table-column prop="productNumber" label="商品编码" header-align="center" align="center" />
+							<el-table-column prop="barcode" label="条码" header-align="center" align="center" />
+							<el-table-column prop="storeName" :label="documentType" header-align="center" align="center" />
+							<el-table-column prop="quantity" label="数量" header-align="center" align="center" />
+							<el-table-column prop="unitName" label="单位" header-align="center" align="center" />
+							<el-table-column prop="unitPrice" label="单价" header-align="center" align="center" />
+							<el-table-column prop="amount" label="金额" header-align="center" align="center" />
 						</el-table>
 					</el-tab-pane>
+					
 				</el-tabs>
 			</GrDocumentFoot>
 		</el-container>
 	</div>
 </template>
 
-<script setup lang="ts" name="PurchaseReportIndex">
+<script setup lang="ts" name="StockReportChangeIndex">
 import { useCrud } from '@/hooks'
 import { reactive, ref, onMounted } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
@@ -123,10 +139,11 @@ const queryRef = ref()
 
 // 初始化表格高度
 const tableHeight = ref(0)
+const occupyHeight = ref(265)//其他部分占用高度
 const footHeight = ref(0)
 // 更新表格高度的方法
 const updateTableHeight = () => {
-	tableHeight.value = window.innerHeight -(264+footHeight.value)
+	tableHeight.value = window.innerHeight -(occupyHeight.value+footHeight.value)
 }
 const isArrowUpFu = (isArrowUp: number) => {
 	footHeight.value = isArrowUp
@@ -139,25 +156,23 @@ onMounted(() => {
 })
 
 const router = useRouter()
-
 // 修改
 const changeHandle = (documentType: string, id: number) => {
 	let path
 	let query = {}
-	if(documentType === '32'){
-		path = '/settlement/payment/index'
+	if(documentType === '21'){
+		path = '/stock/allot/index'
 		
-	}else if(documentType === '34'){
-		path = '/settlement/receivePayment/index'
-	}else if(documentType === '36'){
-		path = '/settlement/expend/index'
-	}else if(documentType === '37'){
-		path = '/settlement/income/index'
+	}else if(documentType === '22'){
+		path = '/stock/otherIn/index'
+		
+	}else if(documentType === '23'){
+		path = '/stock/otherOut/index'
 	}
 	query = { id: id.toString() }
 	router.push({path,query})
 }
-
+	
 const state: IHooksOptions = reactive({
 	dataListUrl: '/order/grDocument/page',
 	deleteUrl: '/order/grDocument',
@@ -167,56 +182,41 @@ const state: IHooksOptions = reactive({
 		userId: '',
 		documentTimes: [] as string[],
 		types: [] as string[],
-		module: 'settlement'
+		module: 'stock'
 	}
 })
 
-const activeName = ref('settlement')
+const activeName = ref('store')
 
 const addOrUpdateRef = ref()
 const addOrUpdateHandle = (id?: Number, row?: any) => {
 	addOrUpdateRef.value.init(id, row)
 }
 
+const documentDetailList = reactive<DocumentDetail[]>([]);
 const accountDetailList = reactive<AccountDetail[]>([]);
 const documentType =  ref('出库仓库')
 const handleRow = (row: any) =>{
-	if(row.type === '02'){
+	if(row.type === '22'){
 		documentType.value = '入库仓库'
-	}else if(row.type === '03'){
+	}else if(row.type === '23'){
 		documentType.value = '出库仓库'
 	}
+	useGetDocumentDetailApi(row.documentCode).then(res => {
+		 documentDetailList.splice(0, documentDetailList.length, ...res.data);
+	})
 	useGetDocumentAccountDetailApi(row.id).then(res => {
 		 accountDetailList.splice(0, accountDetailList.length, ...res.data);
 	})
 }
 
 const queryDataList =() =>{
+	documentDetailList.length = 0;
 	accountDetailList.length = 0;
 	getDataList()
 }
 
-const addDocumentType = ref([
-  { "id": '32', "name": "付款单" },
-  { "id": '34', "name": "收款单" },
-  { "id": '36', "name": "支出单" },
-  { "id": '37', "name": "收入单" }
-])
-
-const addDocumentUrl = (data: any) =>{
-	let path
-	if(data.id === '32'){
-		path = '/settlement/payment/index'
-		
-	}else if(data.id === '34'){
-		path = '/settlement/receivePayment/index'
-	}else if(data.id === '36'){
-		path = '/settlement/expend/index'
-	}else if(data.id === '37'){
-		path = '/settlement/income/index'
-	}
-	router.push({path})
-}
+	
 
 const { getDataList, sizeChangeHandle, selectionChangeHandle, sortChangeHandle, currentChangeHandle, deleteBatchHandle, reset } = useCrud(state)
 </script>

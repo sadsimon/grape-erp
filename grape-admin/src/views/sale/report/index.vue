@@ -39,7 +39,11 @@
 			<el-card class="main">
 				<el-space>
 					<el-space>
-						<el-button icon="Plus" @click="addOrUpdateHandle()">新增单据</el-button>
+						<GrButton placeholder="新增单据" :data="addDocumentType" @select="addDocumentUrl($event)" width="120px">
+							  <template #prefix>
+									<el-icon><Plus /></el-icon>
+							  </template>
+						</GrButton>
 					</el-space>
 					<el-space>
 						<el-button icon="Delete" plain type="danger" @click="deleteBatchHandle()">批量删除</el-button>
@@ -212,6 +216,22 @@ const queryDataList =() =>{
 	documentDetailList.length = 0;
 	accountDetailList.length = 0;
 	getDataList()
+}
+
+const addDocumentType = ref([
+  { "id": '13', "name": "销售出库单" },
+  { "id": '14', "name": "销售退货单" }
+])
+
+const addDocumentUrl = (data: any) =>{
+	let path
+	if(data.id === '13'){
+		path = '/sale/salesOutbound/index'
+		
+	}else if(data.id === '14'){
+		path = '/sale/return/index'
+	}
+	router.push({path})
 }
 
 const { getDataList, sizeChangeHandle, selectionChangeHandle, sortChangeHandle, currentChangeHandle, deleteBatchHandle, reset } = useCrud(state)

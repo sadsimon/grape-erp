@@ -23,8 +23,8 @@
 					</el-form-item>
 					<el-form-item prop="types" label="单据类型">
 						<el-select v-model="state.queryForm.types" multiple style="width: 240px" >
-							  <el-option label="采购入库" value="02" />
-							  <el-option label="采购退货" value="03" />
+							  <el-option label="采购入库单" value="02" />
+							  <el-option label="采购退货单" value="03" />
 						</el-select>
 					</el-form-item>
 					<el-form-item>
@@ -39,7 +39,11 @@
 			<el-card class="main">
 				<el-space>
 					<el-space>
-						<el-button icon="Plus" @click="addOrUpdateHandle()">新增单据</el-button>
+						  <GrButton placeholder="新增单据" :data="addDocumentType" @select="addDocumentUrl($event)" width="120px">
+							  <template #prefix>
+									<el-icon><Plus /></el-icon>
+							  </template>
+						  </GrButton>
 					</el-space>
 					<el-space>
 						<el-button icon="Delete" plain type="danger" @click="deleteBatchHandle()">批量删除</el-button>
@@ -213,7 +217,21 @@ const queryDataList =() =>{
 	getDataList()
 }
 
-	
+const addDocumentType = ref([
+  { "id": '02', "name": "采购入库单" },
+  { "id": '03', "name": "采购退货单" }
+])
+
+const addDocumentUrl = (data: any) =>{
+	let path
+	if(data.id === '02'){
+		path = '/purchase/order/index'
+		
+	}else if(data.id === '03'){
+		path = '/purchase/return/index'
+	}
+	router.push({path})
+}
 
 const { getDataList, sizeChangeHandle, selectionChangeHandle, sortChangeHandle, currentChangeHandle, deleteBatchHandle, reset } = useCrud(state)
 </script>
