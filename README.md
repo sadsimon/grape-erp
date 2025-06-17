@@ -33,7 +33,7 @@
 	邮箱 1161095164@qq.com
 
 # 测试环境体验
-	http://47.101.175.183:88/login
+	<a href="http://47.101.175.183:88/login" target="_blank">http://47.101.175.183:88/login</a>
 	账号 admin 密码 admin
 	
 # 开发环境
