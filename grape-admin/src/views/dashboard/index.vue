@@ -347,8 +347,13 @@
 	
 	const tableData = [
 		{
-			name: 'grape-erp',
+			name: 'gitee地址',
 			url: 'https://gitee.com/crazy-code/grape-erp',
+			intro: '企业级ERP，使用门槛极低。'
+		},
+		{
+			name: 'gitcode地址',
+			url: 'https://gitcode.com/crazy_laoma/grape-erp',
 			intro: '企业级ERP，使用门槛极低。'
 		}
 	]
