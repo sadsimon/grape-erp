@@ -19,7 +19,7 @@
 										value-format="YYYY-MM-DD HH:mm:ss"
 										:disabled="isfinish"
 									  />
-							</el-form-item> 
+							</el-form-item>
 						</el-col>
 						<el-col :span="24" :lg="6" :md="6" :sm="6" :xs='6'>
 							<el-form-item prop="contactunitsId" label="结算单位">
