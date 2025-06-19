@@ -5,6 +5,7 @@
     <select id="getList" resultType="net.grape.product.vo.ContactunitsListVO">
         SELECT
         t1.*,
+        y.category_name,
         ct.contact_name,
         ct.mobile,
         ct.landline,

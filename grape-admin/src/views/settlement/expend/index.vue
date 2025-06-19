@@ -308,8 +308,8 @@
 	}
 
 	const dataRules = ref({
-		contactunitsId: [{ required: true, message: '必填项不能为空', trigger: 'blur' }],
-		documentTime: [{ required: true, message: '必填项不能为空', trigger: 'blur' }]
+		contactunitsId: [{ required: true, message: '必填项不能为空', trigger: 'change' }],
+		documentTime: [{ required: true, message: '必填项不能为空', trigger: 'change' }]
 	})
 	
 	const id = ref('');
