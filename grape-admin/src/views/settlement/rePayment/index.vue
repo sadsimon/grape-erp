@@ -165,6 +165,14 @@
 		})
 	}
 
+	//总金额
+	const totalPayAmount = computed(() => {
+		return dataForm.value.documentAccountDetailList.reduce((sum, item) => {
+			const amount = Number(item.amount) || 0
+			return sum + amount
+		}, 0)
+	})
+	
 	const submitHandle = () => {
 		saveRef.value.validate((valid : boolean) => {
 			if (!valid) {
@@ -176,7 +184,7 @@
 					message: '入库商品不能为空'
 				})
 			} */
-			
+			dataForm.value.finalAmount = 0
 			useDocumentSubmitApi(dataForm.value).then(() => {
 				ElMessage.success({
 					message: '操作成功',

@@ -23,10 +23,12 @@
 					</el-form-item>
 					<el-form-item prop="types" label="单据类型">
 						<el-select v-model="state.queryForm.types" multiple style="width: 240px" >
-							  <el-option label="支出单" value="36" />
-							  <el-option label="收入单" value="37" />
-							  <el-option label="收款单" value="34" />
-							  <el-option label="付款单" value="32" />
+							<el-option label="预付款单" value="38" />
+							<el-option label="预售款单" value="39" />
+							<el-option label="支出单" value="36" />
+							<el-option label="收入单" value="37" />
+							<el-option label="收款单" value="34" />
+							<el-option label="付款单" value="32" />
 						</el-select>
 					</el-form-item>
 					<el-form-item>
@@ -71,12 +73,12 @@
 					</el-table-column>
 					<el-table-column prop="documentTime" label="录单时间" header-align="center" align="center" width="160"/>
 					<el-table-column prop="documentCode" label="单据编号" header-align="center" align="center" width="170"/>
-					<ma-dict-column prop="documentStatus" label="单据状态" dict-type="document_status" />
+					<!-- <ma-dict-column prop="documentStatus" label="单据状态" dict-type="document_status" /> -->
 					<ma-dict-column prop="documentType" label="单据类型" dict-type="document_type" />
-					<el-table-column prop="contactunitsName" label="供货单位" header-align="center" align="center" />
+					<el-table-column prop="contactunitsName" label="往来单位" header-align="center" align="center" />
 					<el-table-column prop="realName" label="经手人" header-align="center" align="center" />
 					<el-table-column prop="creatorName" label="制单人" header-align="center" align="center" />
-					<el-table-column prop="finalAmount" label="采购金额" header-align="center" align="center" />
+					<el-table-column prop="finalAmount" label="金额" header-align="center" align="center" />
 				</el-table>
 				<el-pagination
 							:current-page="state.page"
@@ -153,6 +155,10 @@ const changeHandle = (documentType: string, id: number) => {
 		path = '/settlement/expend/index'
 	}else if(documentType === '37'){
 		path = '/settlement/income/index'
+	}else if(documentType === '38'){
+		path = '/settlement/rePayment/index'
+	}else if(documentType === '39'){
+		path = '/settlement/reReceivePayment/index'
 	}
 	query = { id: id.toString() }
 	router.push({path,query})
@@ -200,7 +206,9 @@ const addDocumentType = ref([
   { "id": '32', "name": "付款单" },
   { "id": '34', "name": "收款单" },
   { "id": '36', "name": "支出单" },
-  { "id": '37', "name": "收入单" }
+  { "id": '37', "name": "收入单" },
+  { "id": '38', "name": "预付款单" },
+  { "id": '39', "name": "预收款单" }
 ])
 
 const addDocumentUrl = (data: any) =>{
@@ -214,6 +222,10 @@ const addDocumentUrl = (data: any) =>{
 		path = '/settlement/expend/index'
 	}else if(data.id === '37'){
 		path = '/settlement/income/index'
+	}else if(data.id === '38'){
+		path = '/settlement/rePayment/index'
+	}else if(data.id === '39'){
+		path = '/settlement/reReceivePayment/index'
 	}
 	router.push({path})
 }

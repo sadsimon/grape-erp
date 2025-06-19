@@ -104,26 +104,33 @@ public class GrContactunitsServiceImpl extends BaseServiceImpl<GrContactunitsMap
     /**
      * 此前应付
      * @param contactunitsId、
-     * （总应该付款-退货应该付款）-（总已收款-总已退款）
+     * （总应该付款-总退货应该付款）-（总已收款-总已退款）
      * @return
      */
     @Override
     public BigDecimal getHistoryPayAmount(Long contactunitsId) {
+        //总应该付款
         Map needAmountMap = grDocumentMapper.getSumAmount(contactunitsId,"2");
         BigDecimal needAmount = new BigDecimal(0);
         if(needAmountMap != null) {
             needAmount = (BigDecimal) needAmountMap.get("should_amount");
         }
+
+        //总退货应该付款
         Map needReturnAmountMap = grDocumentMapper.getSumAmount(contactunitsId,"1");
         BigDecimal needReturnAmount = new BigDecimal(0);
         if(needReturnAmountMap != null) {
             needReturnAmount = (BigDecimal) needReturnAmountMap.get("should_amount");
         }
+
+        //总已收款
         Map alreadyAmountMap = grDocumentAccountDetailMapper.getSumPayAmount(contactunitsId,"2");
         BigDecimal alreadyAmount = new BigDecimal(0);
         if(alreadyAmountMap != null) {
             alreadyAmount = (BigDecimal) alreadyAmountMap.get("pay_amount");
         }
+
+        //总已退款
         Map alreadyReturnAmountMap = grDocumentAccountDetailMapper.getSumPayAmount(contactunitsId,"1");
         BigDecimal alreadyReturnAmount = new BigDecimal(0);
         if(alreadyReturnAmountMap != null) {
@@ -142,5 +149,35 @@ public class GrContactunitsServiceImpl extends BaseServiceImpl<GrContactunitsMap
     @Override
     public BigDecimal getHistoryReceivePayment(Long contactunitsId) {
         return this.getHistoryPayAmount(contactunitsId).negate();
+    }
+
+    @Override
+    public void updateAdvance(Long contactunitsId, BigDecimal amount, String documentType) {
+        if ("38".equals(documentType)) {
+            GrContactunitsEntity grContactunitsEntity = getById(contactunitsId);
+            //单据预付款，就是供应商的预收款
+            grContactunitsEntity.setAdvanceIn(NumberUtil.add(grContactunitsEntity.getAdvanceIn(),amount));
+            updateById(grContactunitsEntity);
+        }else if("39".equals(documentType)){
+            GrContactunitsEntity grContactunitsEntity = getById(contactunitsId);
+            //单据预收款款，就是供应商的预付款
+            grContactunitsEntity.setAdvanceOut(NumberUtil.add(grContactunitsEntity.getAdvanceOut(),amount));
+            updateById(grContactunitsEntity);
+        }
+    }
+
+    @Override
+    public void returnAdvance(Long contactunitsId, BigDecimal amount, String documentType) {
+        if ("38".equals(documentType)) {
+            GrContactunitsEntity grContactunitsEntity = getById(contactunitsId);
+            //单据预付款，就是供应商的预收款
+            grContactunitsEntity.setAdvanceIn(NumberUtil.sub(grContactunitsEntity.getAdvanceIn(),amount));
+            updateById(grContactunitsEntity);
+        } else if ("39".equals(documentType)) {
+            GrContactunitsEntity grContactunitsEntity = getById(contactunitsId);
+            //单据预收款款，就是供应商的预付款
+            grContactunitsEntity.setAdvanceOut(NumberUtil.sub(grContactunitsEntity.getAdvanceOut(),amount));
+            updateById(grContactunitsEntity);
+        }
     }
 }

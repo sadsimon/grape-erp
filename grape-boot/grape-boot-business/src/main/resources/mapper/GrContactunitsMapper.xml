@@ -4,19 +4,7 @@
 
     <select id="getList" resultType="net.grape.product.vo.ContactunitsListVO">
         SELECT
-        t1.id,
-        t1.contactunits_code,
-        t1.contactunits_name,
-        t1.category_id,
-        y.category_name,
-        t1.contact_id,
-        t1.deposit_bank,
-        t1.bank_number,
-        t1.taxpayer_id_num,
-        t1.initial_advance_payment,
-        t1.rate,
-        t1.initial_payable,
-        t1.state,
+        t1.*,
         ct.contact_name,
         ct.mobile,
         ct.landline,
@@ -25,8 +13,7 @@
         ct.city,
         ct.district,
         ct.address,
-        ct.primary_person,
-        t1.type
+        ct.primary_person
         FROM
         gr_contactunits t1
         LEFT JOIN gr_contactunits_contact ct ON ct.contactunits_id = t1.id

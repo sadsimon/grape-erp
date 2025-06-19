@@ -39,4 +39,14 @@ public interface IGrContactunitsService extends BaseService<GrContactunitsEntity
      *此前应收
      */
     BigDecimal getHistoryReceivePayment(Long contactunitsId);
+
+    /*
+    预收款/付款
+     */
+    void updateAdvance(Long contactunitsId, BigDecimal amount, String documentType);/*
+
+    /**
+    预收款/付款回退
+     */
+    void returnAdvance(Long contactunitsId, BigDecimal amount, String documentType);
 }

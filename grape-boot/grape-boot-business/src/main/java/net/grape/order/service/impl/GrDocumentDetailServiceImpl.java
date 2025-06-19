@@ -51,10 +51,12 @@ public class GrDocumentDetailServiceImpl extends BaseServiceImpl<GrDocumentDetai
     public void saveOrUpdateList(List<GrDocumentDetailVO> list, String documentCode, Long documentId){
         //先删除历史
         deleteByDocumentId(documentId);
-        list.stream().forEach(entity -> {entity.setDocumentCode(documentCode);
-            entity.setDocumentId(documentId);
-            entity.setId(null);});
-        baseMapper.insertOrUpdate(GrDocumentDetailConvert.INSTANCE.convertList1(list));
+        if (list != null && list.size() > 0) {
+            list.stream().forEach(entity -> {entity.setDocumentCode(documentCode);
+                entity.setDocumentId(documentId);
+                entity.setId(null);});
+            baseMapper.insertOrUpdate(GrDocumentDetailConvert.INSTANCE.convertList1(list));
+        }
     }
 
     @Override

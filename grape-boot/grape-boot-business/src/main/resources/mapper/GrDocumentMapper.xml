@@ -39,7 +39,7 @@
             and t.document_time &lt;= STR_TO_DATE(#{documentTimeEnd}, '%Y-%m-%d %H:%i:%s')
         </if>
         <if test="module == 'settlement' ">
-            and t.document_type IN ('32', '34', '36', '37')
+            and t.document_type IN ('32', '34', '36', '37', '38', '39')
         </if>
         <if test="module == 'purchase' ">
             and t.document_type IN ('01', '02', '03')

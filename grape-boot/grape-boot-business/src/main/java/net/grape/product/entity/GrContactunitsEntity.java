@@ -13,7 +13,7 @@ import lombok.Setter;
  * </p>
  *
  * @author 疯狂的老码
- * @since 2025-06-04
+ * @since 2025-06-19
  */
 @Getter
 @Setter
@@ -58,9 +58,24 @@ public class GrContactunitsEntity extends BaseEntity {
     private String taxpayerIdNum;
 
     /**
+     * 期初预收款
+     */
+    private BigDecimal initAdvanceIn;
+
+    /**
      * 期初预付款
      */
-    private BigDecimal initialAdvancePayment;
+    private BigDecimal initAdvanceOut;
+
+    /**
+     * 累计预收款
+     */
+    private BigDecimal advanceIn;
+
+    /**
+     * 累计预付款
+     */
+    private BigDecimal advanceOut;
 
     /**
      * 增值税率%
@@ -70,15 +85,35 @@ public class GrContactunitsEntity extends BaseEntity {
     /**
      * 期初应付
      */
-    private BigDecimal initialPayable;
+    private BigDecimal initNeedPay;
 
     /**
-     * 状态 0：失效  1：生效
+     * 累计应付
      */
-    private Integer state;
+    private BigDecimal needPay;
+
+    /**
+     * 期初应收
+     */
+    private BigDecimal initNeedGet;
+
+    /**
+     * 累计应收
+     */
+    private BigDecimal needGet;
+
+    /**
+     * 累计预付款
+     */
+    private BigDecimal payable;
 
     /**
      * 类型：0：供应商；1：客户
      */
     private String type;
+
+    /**
+     * 状态 0：失效  1：生效
+     */
+    private Integer state;
 }

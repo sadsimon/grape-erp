@@ -16,9 +16,11 @@ import net.grape.framework.mybatis.service.impl.BaseServiceImpl;
 import net.grape.order.service.IGrDocumentSettleDetailService;
 import net.grape.order.service.impl.documentHandler.Document;
 import net.grape.order.service.impl.documentHandler.ExecuteFactory;
+import net.grape.order.vo.GrDocumentAccountDetailVO;
 import net.grape.order.vo.GrDocumentDetailVO;
 import net.grape.order.vo.GrDocumentSettleDetailVO;
 import net.grape.order.vo.GrDocumentVO;
+import net.grape.product.service.IGrContactunitsService;
 import net.grape.stock.service.IGrCurrentStockService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +44,7 @@ public class GrDocumentServiceImpl extends BaseServiceImpl<GrDocumentMapper, GrD
     private final IGrCurrentStockService iGrCurrentStockService;
     private final IGrDocumentSettleDetailService iGrDocumentSettleDetailService;
     private final IGrDocumentAccountDetailService iGrDocumentAccountDetailService;
+    private final IGrContactunitsService iGrContactunitsService;
     private final ExecuteFactory executeFactory;
 
     @Override
@@ -115,6 +118,12 @@ public class GrDocumentServiceImpl extends BaseServiceImpl<GrDocumentMapper, GrD
         iGrDocumentSettleDetailService.saveOrUpdateList(document.makeSettleDetail(),grDocumentEntity.getId());
         //账户收款/扣款
         iGrDocumentAccountDetailService.saveOrUpdateList(document.makeAccountDetail(),grDocumentEntity.getId());
+        //预收款/预付款
+        BigDecimal totalAmount = vo.getDocumentAccountDetailList().stream()
+                .map(accountDetail -> accountDetail.getAmount())
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        iGrContactunitsService.updateAdvance(vo.getContactunitsId(), totalAmount, vo.getDocumentType());
     }
 
     @Override
@@ -123,6 +132,8 @@ public class GrDocumentServiceImpl extends BaseServiceImpl<GrDocumentMapper, GrD
         Document document = executeFactory.createDocument(vo);
         //还原库存
         returnStock(vo.getId(),document.isNeedStock());
+        //还原预付款/预收款
+        returnAdvance(vo.getId(),vo.getContactunitsId(), vo.getDocumentType());
 
         GrDocumentEntity grDocumentEntity = GrDocumentConvert.INSTANCE.convert(vo);
         updateById(grDocumentEntity);
@@ -138,6 +149,12 @@ public class GrDocumentServiceImpl extends BaseServiceImpl<GrDocumentMapper, GrD
         iGrDocumentSettleDetailService.saveOrUpdateList(document.makeSettleDetail(),grDocumentEntity.getId());
         //账户收款/扣款
         iGrDocumentAccountDetailService.saveOrUpdateList(document.makeAccountDetail(),grDocumentEntity.getId());
+        //预收款/预付款
+        BigDecimal totalAmount = vo.getDocumentAccountDetailList().stream()
+                .map(accountDetail -> accountDetail.getAmount())
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        iGrContactunitsService.updateAdvance(vo.getContactunitsId(), totalAmount, vo.getDocumentType());
     }
 
     private void returnStock(Long id,boolean isNeedStock){
@@ -148,6 +165,15 @@ public class GrDocumentServiceImpl extends BaseServiceImpl<GrDocumentMapper, GrD
                 iGrCurrentStockService.updateStock(entityOld.getDocumentType(), detail.getProductId(), detail.getStoreId(), detail.getInStoreId(), detail.getUnitId(), detail.getQuantity(), false);
             });
         }
+    }
+
+    private void returnAdvance(Long id, Long contactunitsId, String documentType){
+        List<GrDocumentAccountDetailVO> accountDetailList = iGrDocumentAccountDetailService.getlistByDocumentId(id);
+        BigDecimal totalAmount = accountDetailList.stream()
+                .map(accountDetail -> accountDetail.getAmount())
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        iGrContactunitsService.returnAdvance(contactunitsId, totalAmount, documentType);
     }
 
     @Override

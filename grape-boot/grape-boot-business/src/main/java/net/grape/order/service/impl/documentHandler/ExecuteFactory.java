@@ -26,6 +26,9 @@ public class ExecuteFactory {
             case "22":
             case "23":
                 return new AllotDocument(documentVO);
+            case "38":
+            case "39":
+                return new RePaymentCocument(documentVO);
             default:
                 throw new IllegalArgumentException("Unknown document type: " + documentVO.getDocumentType());
         }

@@ -92,7 +92,17 @@ public enum DocumentEnum {
     /**
      *37：收入单
      */
-    DOCUMENT_TYPE_37("37","SRD");
+    DOCUMENT_TYPE_37("37","SRD"),
+
+    /**
+     *38：预付款单
+     */
+    DOCUMENT_TYPE_38("38","YFKD"),
+
+    /**
+     *39：预收款单
+     */
+    DOCUMENT_TYPE_39("39","YSKD");
 
     private final String value;
     private final String prefix;

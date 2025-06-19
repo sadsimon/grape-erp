@@ -64,10 +64,28 @@ public class ContactunitsVO implements Serializable {
     private String taxpayerIdNum;
 
     /**
+     * 期初预收款
+     */
+    @Schema(description = "期初预收款")
+    private BigDecimal initAdvanceIn;
+
+    /**
      * 期初预付款
      */
     @Schema(description = "期初预付款")
-    private BigDecimal initialAdvancePayment;
+    private BigDecimal initAdvanceOut;
+
+    /**
+     * 累计预收款
+     */
+    @Schema(description = "累计预收款")
+    private BigDecimal advanceIn;
+
+    /**
+     * 累计预付款
+     */
+    @Schema(description = "累计预付款")
+    private BigDecimal advanceOut;
 
     /**
      * 增值税率%
@@ -79,7 +97,31 @@ public class ContactunitsVO implements Serializable {
      * 期初应付
      */
     @Schema(description = "期初应付")
-    private BigDecimal initialPayable;
+    private BigDecimal initNeedPay;
+
+    /**
+     * 累计应付
+     */
+    @Schema(description = "累计应付")
+    private BigDecimal needPay;
+
+    /**
+     * 期初应收
+     */
+    @Schema(description = "期初应收")
+    private BigDecimal initNeedGet;
+
+    /**
+     * 累计应收
+     */
+    @Schema(description = "累计应收")
+    private BigDecimal needGet;
+
+    /**
+     * 累计预付款
+     */
+    @Schema(description = "累计预付款")
+    private BigDecimal payable;
 
     /**
      * 类型：0：供应商；1：客户

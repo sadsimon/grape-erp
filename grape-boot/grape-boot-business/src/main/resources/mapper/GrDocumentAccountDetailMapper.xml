@@ -42,6 +42,7 @@
         t.id = l.document_id
         and t.deleted = 0
         and l.deleted = 0
+        and t.document_type not in ('38','39')
 
         <if test="contactunitsId != null">
             and t.contactunits_id = #{contactunitsId}
