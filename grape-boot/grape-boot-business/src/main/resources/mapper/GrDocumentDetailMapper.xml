@@ -8,12 +8,14 @@
         t.number product_number,
         ut.`name` unitName,
         e.store_name,
+        d.name project_name,
         l.*
         FROM
         gr_document_detail l
         LEFT JOIN gr_product t ON l.product_id = t.id and t.deleted = 0
         LEFT JOIN gr_unit ut ON l.unit_id = ut.id and ut.deleted = 0
         LEFT JOIN gr_store e ON l.store_id = e.id and e.deleted = 0
+        LEFT JOIN gr_income_expend d ON d.id = l.project_id and d.deleted = 0
         WHERE
         l.deleted = 0
 

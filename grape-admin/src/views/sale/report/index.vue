@@ -199,12 +199,12 @@ const documentDetailList = reactive<DocumentDetail[]>([]);
 const accountDetailList = reactive<AccountDetail[]>([]);
 const documentType =  ref('出库仓库')
 const handleRow = (row: any) =>{
-	if(row.type === '02'){
+	if(row.documentType === '02'){
 		documentType.value = '入库仓库'
-	}else if(row.type === '03'){
+	}else if(row.documentType === '03'){
 		documentType.value = '出库仓库'
 	}
-	useGetDocumentDetailApi(row.documentCode).then(res => {
+	useGetDocumentDetailApi(row.id).then(res => {
 		 documentDetailList.splice(0, documentDetailList.length, ...res.data);
 	})
 	useGetDocumentAccountDetailApi(row.id).then(res => {

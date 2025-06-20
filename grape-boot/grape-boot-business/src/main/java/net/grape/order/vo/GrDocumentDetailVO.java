@@ -41,6 +41,12 @@ public class GrDocumentDetailVO  implements Serializable {
     private Long projectId;
 
     /**
+     * 关联项目id
+     */
+    @Schema(description = "关联项目名称")
+    private String projectName;
+
+    /**
      * 商品id
      */
     @Schema(description = "商品id")

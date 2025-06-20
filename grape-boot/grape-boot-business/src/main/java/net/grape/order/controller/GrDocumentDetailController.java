@@ -34,8 +34,8 @@ public class GrDocumentDetailController {
     @GetMapping("list")
     @Operation(summary = "列表")
     @PreAuthorize("hasAuthority('order:grDocumentDetail:list')")
-    public Result<List<GrDocumentDetailVO>> list(String documentCode) {
-        List<GrDocumentDetailVO> list = iGrDocumentDetailService.getlist(documentCode);
+    public Result<List<GrDocumentDetailVO>> list(Long documentId) {
+        List<GrDocumentDetailVO> list = iGrDocumentDetailService.getlist(documentId);
         return Result.ok(list);
     }
 }

@@ -202,7 +202,7 @@ const handleRow = (row: any) =>{
 	}else if(row.type === '23'){
 		documentType.value = '出库仓库'
 	}
-	useGetDocumentDetailApi(row.documentCode).then(res => {
+	useGetDocumentDetailApi(row.id).then(res => {
 		 documentDetailList.splice(0, documentDetailList.length, ...res.data);
 	})
 	useGetDocumentAccountDetailApi(row.id).then(res => {

@@ -6,7 +6,7 @@
 					<el-form-item prop="documentCode" label="单据编号">
 						<el-input v-model="state.queryForm.documentCode"></el-input>
 					</el-form-item>
-					<el-form-item prop="contactunitsId" label="往来单位">
+					<el-form-item prop="contactunitsId" label="供应商">
 						<GrContactunitsInput v-model="state.queryForm.contactunitsId" readonly></GrContactunitsInput>
 					</el-form-item>
 					<el-form-item prop="userId" label="经手人">
@@ -23,8 +23,8 @@
 					</el-form-item>
 					<el-form-item prop="types" label="单据类型">
 						<el-select v-model="state.queryForm.types" multiple style="width: 240px" >
-							  <el-option label="采购入库单" value="02" />
-							  <el-option label="采购退货单" value="03" />
+							<el-option label="预付款单" value="38" />
+							<el-option label="预售款单" value="39" />
 						</el-select>
 					</el-form-item>
 					<el-form-item>
@@ -39,11 +39,11 @@
 			<el-card class="main">
 				<el-space>
 					<el-space>
-						  <GrButton placeholder="新增单据" :data="addDocumentType" @select="addDocumentUrl($event)" width="120px">
+						<GrButton placeholder="新增单据" :data="addDocumentType" @select="addDocumentUrl($event)" width="120px">
 							  <template #prefix>
 									<el-icon><Plus /></el-icon>
 							  </template>
-						  </GrButton>
+						</GrButton>
 					</el-space>
 					<el-space>
 						<el-button icon="Delete" plain type="danger" @click="deleteBatchHandle()">批量删除</el-button>
@@ -69,13 +69,12 @@
 					</el-table-column>
 					<el-table-column prop="documentTime" label="录单时间" header-align="center" align="center" width="160"/>
 					<el-table-column prop="documentCode" label="单据编号" header-align="center" align="center" width="170"/>
-					<ma-dict-column prop="documentStatus" label="单据状态" dict-type="document_status" />
+					<!-- <ma-dict-column prop="documentStatus" label="单据状态" dict-type="document_status" /> -->
 					<ma-dict-column prop="documentType" label="单据类型" dict-type="document_type" />
-					<el-table-column prop="contactunitsName" label="供货单位" header-align="center" align="center" />
+					<el-table-column prop="contactunitsName" label="往来单位" header-align="center" align="center" />
 					<el-table-column prop="realName" label="经手人" header-align="center" align="center" />
 					<el-table-column prop="creatorName" label="制单人" header-align="center" align="center" />
-					
-					<el-table-column prop="finalAmount" label="采购金额" header-align="center" align="center" />
+					<el-table-column prop="finalAmount" label="单据金额" header-align="center" align="center" />
 				</el-table>
 				<el-pagination
 							:current-page="state.page"
@@ -91,34 +90,13 @@
 						<div style="width: 100%"></div>
 						
 			</el-card>
-			<GrDocumentFoot @isArrowUp="isArrowUpFu" :height="220" maxHeight="300" >
+			<GrDocumentFoot @isArrowUp="isArrowUpFu" height="220" maxHeight="300" >
 				<el-tabs v-model="activeName" type="card">
-					<el-tab-pane label="入库明细" name="store">
-						<el-table border :data="documentDetailList" height="186px">
-							<el-table-column prop="img" label="图片" class-name="column-image" header-align="center" align="center">
-								<template #default="scope">
-									<el-popover v-if="scope.row['imgList'][0]" placement="right" :width="278">
-										<template #reference>
-											<el-image style="width: 32px; height: 32px" :src="scope.row['imgList'][0]" fit="contain" />
-										</template>
-										<el-image style="width: 250px; height: 250px" :src="scope.row['imgList'][0]" fit="contain" />
-									</el-popover>
-								</template>
-							</el-table-column>
-							<el-table-column prop="productName" label="商品名称" header-align="center" align="center" />
-							<el-table-column prop="productNumber" label="商品编码" header-align="center" align="center" />
-							<el-table-column prop="barcode" label="条码" header-align="center" align="center" />
-							<el-table-column prop="storeName" :label="documentType" header-align="center" align="center" />
-							<el-table-column prop="quantity" label="数量" header-align="center" align="center" />
-							<el-table-column prop="unitName" label="单位" header-align="center" align="center" />
-							<el-table-column prop="unitPrice" label="单价" header-align="center" align="center" />
-							<el-table-column prop="amount" label="金额" header-align="center" align="center" />
-						</el-table>
-					</el-tab-pane>
-					<el-tab-pane label="结算明细" name="settlement">
+					<el-tab-pane label="收/付款情况" name="rePayment">
 						<el-table border :data="accountDetailList" height="186px">
 							<el-table-column width="200px" prop="accountName" label="付款账户" header-align="center" align="center" />
-							<el-table-column width="200px" prop="amount" label="付款明细" header-align="center" align="center" />
+							<el-table-column width="200px" prop="amount" label="付款金额" header-align="center" align="center" />
+							<el-table-column width="350px" prop="remark" label="备注" header-align="center" align="center" />
 						</el-table>
 					</el-tab-pane>
 				</el-tabs>
@@ -127,7 +105,7 @@
 	</div>
 </template>
 
-<script setup lang="ts" name="PurchaseReportIndex">
+<script setup lang="ts" name="SettlementReportRePaymentIndex">
 import { useCrud } from '@/hooks'
 import { reactive, ref, onMounted } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
@@ -143,11 +121,10 @@ const queryRef = ref()
 
 // 初始化表格高度
 const tableHeight = ref(0)
-const occupyHeight = ref(265)//其他部分占用高度
 const footHeight = ref(0)
 // 更新表格高度的方法
 const updateTableHeight = () => {
-	tableHeight.value = window.innerHeight -(occupyHeight.value+footHeight.value)
+	tableHeight.value = window.innerHeight -(264+footHeight.value)
 }
 const isArrowUpFu = (isArrowUp: number) => {
 	footHeight.value = isArrowUp
@@ -160,20 +137,20 @@ onMounted(() => {
 })
 
 const router = useRouter()
+
 // 修改
 const changeHandle = (documentType: string, id: number) => {
 	let path
 	let query = {}
-	if(documentType === '02'){
-		path = '/purchase/order/index'
-		
-	}else if(documentType === '03'){
-		path = '/purchase/return/index'
+	if(documentType === '38'){
+		path = '/settlement/rePayment/index'
+	}else if(documentType === '39'){
+		path = '/settlement/reReceivePayment/index'
 	}
 	query = { id: id.toString() }
 	router.push({path,query})
 }
-	
+
 const state: IHooksOptions = reactive({
 	dataListUrl: '/order/grDocument/page',
 	deleteUrl: '/order/grDocument',
@@ -183,18 +160,17 @@ const state: IHooksOptions = reactive({
 		userId: '',
 		documentTimes: [] as string[],
 		types: [] as string[],
-		module: 'purchase'
+		module: 'rePayment'
 	}
 })
 
-const activeName = ref('store')
+const activeName = ref('rePayment')
 
 const addOrUpdateRef = ref()
 const addOrUpdateHandle = (id?: Number, row?: any) => {
 	addOrUpdateRef.value.init(id, row)
 }
 
-const documentDetailList = reactive<DocumentDetail[]>([]);
 const accountDetailList = reactive<AccountDetail[]>([]);
 const documentType =  ref('出库仓库')
 const handleRow = (row: any) =>{
@@ -203,32 +179,27 @@ const handleRow = (row: any) =>{
 	}else if(row.documentType === '03'){
 		documentType.value = '出库仓库'
 	}
-	useGetDocumentDetailApi(row.id).then(res => {
-		 documentDetailList.splice(0, documentDetailList.length, ...res.data);
-	})
 	useGetDocumentAccountDetailApi(row.id).then(res => {
 		 accountDetailList.splice(0, accountDetailList.length, ...res.data);
 	})
 }
 
 const queryDataList =() =>{
-	documentDetailList.length = 0;
 	accountDetailList.length = 0;
 	getDataList()
 }
 
 const addDocumentType = ref([
-  { "id": '02', "name": "采购入库单" },
-  { "id": '03', "name": "采购退货单" }
+  { "id": '38', "name": "预付款单" },
+  { "id": '39', "name": "预收款单" }
 ])
 
 const addDocumentUrl = (data: any) =>{
 	let path
-	if(data.id === '02'){
-		path = '/purchase/order/index'
-		
-	}else if(data.id === '03'){
-		path = '/purchase/return/index'
+	if(data.id === '38'){
+		path = '/settlement/rePayment/index'
+	}else if(data.id === '39'){
+		path = '/settlement/reReceivePayment/index'
 	}
 	router.push({path})
 }

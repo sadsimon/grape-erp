@@ -5,8 +5,8 @@ export const useGetDocumentCodeApi = (type: string) => {
 }
 
 //入库明细
-export const useGetDocumentDetailApi = (documentCode: string) => {
-	return service.get('/order/grDocumentDetail/list?documentCode=' + documentCode)
+export const useGetDocumentDetailApi = (documentId: number) => {
+	return service.get('/order/grDocumentDetail/list?documentId=' + documentId)
 }
 
 //结算明细

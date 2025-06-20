@@ -32,8 +32,8 @@ public class GrDocumentDetailServiceImpl extends BaseServiceImpl<GrDocumentDetai
     private final IGrProductImgService iGrProductImgService;
 
     @Override
-    public List<GrDocumentDetailVO> getlist(String documentCode) {
-        List<GrDocumentDetailVO> list = baseMapper.getlist(documentCode,null);
+    public List<GrDocumentDetailVO> getlist(Long documentId) {
+        List<GrDocumentDetailVO> list = baseMapper.getlist(null,documentId);
         list.stream().forEach(documentDetailVO -> {
             documentDetailVO.setImgList(iGrProductImgService.getImgList(documentDetailVO.getProductId()).stream().map(GrProductImgVO::getUrl).toList());
         });

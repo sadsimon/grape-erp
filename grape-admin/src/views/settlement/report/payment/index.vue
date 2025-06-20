@@ -23,10 +23,6 @@
 					</el-form-item>
 					<el-form-item prop="types" label="单据类型">
 						<el-select v-model="state.queryForm.types" multiple style="width: 240px" >
-							<el-option label="预付款单" value="38" />
-							<el-option label="预售款单" value="39" />
-							<el-option label="支出单" value="36" />
-							<el-option label="收入单" value="37" />
 							<el-option label="收款单" value="34" />
 							<el-option label="付款单" value="32" />
 						</el-select>
@@ -78,7 +74,7 @@
 					<el-table-column prop="contactunitsName" label="往来单位" header-align="center" align="center" />
 					<el-table-column prop="realName" label="经手人" header-align="center" align="center" />
 					<el-table-column prop="creatorName" label="制单人" header-align="center" align="center" />
-					<el-table-column prop="finalAmount" label="金额" header-align="center" align="center" />
+					<el-table-column prop="finalAmount" label="单据金额" header-align="center" align="center" />
 				</el-table>
 				<el-pagination
 							:current-page="state.page"
@@ -96,10 +92,10 @@
 			</el-card>
 			<GrDocumentFoot @isArrowUp="isArrowUpFu" height="220" maxHeight="300" >
 				<el-tabs v-model="activeName" type="card">
-					<el-tab-pane label="付款情况" name="settlement">
+					<el-tab-pane label="收/付款情况" name="payment">
 						<el-table border :data="accountDetailList" height="186px">
-							<el-table-column width="200px" prop="accountName" label="付款账户" header-align="center" align="center" />
-							<el-table-column width="200px" prop="amount" label="付款金额" header-align="center" align="center" />
+							<el-table-column width="200px" prop="accountName" :label="payType" header-align="center" align="center" />
+							<el-table-column width="200px" prop="amount" :label="payAmount" header-align="center" align="center" />
 							<el-table-column width="350px" prop="remark" label="备注" header-align="center" align="center" />
 						</el-table>
 					</el-tab-pane>
@@ -109,7 +105,7 @@
 	</div>
 </template>
 
-<script setup lang="ts" name="PurchaseReportIndex">
+<script setup lang="ts" name="SettlementReportPaymentIndex">
 import { useCrud } from '@/hooks'
 import { reactive, ref, onMounted } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
@@ -151,14 +147,6 @@ const changeHandle = (documentType: string, id: number) => {
 		
 	}else if(documentType === '34'){
 		path = '/settlement/receivePayment/index'
-	}else if(documentType === '36'){
-		path = '/settlement/expend/index'
-	}else if(documentType === '37'){
-		path = '/settlement/income/index'
-	}else if(documentType === '38'){
-		path = '/settlement/rePayment/index'
-	}else if(documentType === '39'){
-		path = '/settlement/reReceivePayment/index'
 	}
 	query = { id: id.toString() }
 	router.push({path,query})
@@ -173,11 +161,11 @@ const state: IHooksOptions = reactive({
 		userId: '',
 		documentTimes: [] as string[],
 		types: [] as string[],
-		module: 'settlement'
+		module: 'payment'
 	}
 })
 
-const activeName = ref('settlement')
+const activeName = ref('payment')
 
 const addOrUpdateRef = ref()
 const addOrUpdateHandle = (id?: Number, row?: any) => {
@@ -185,12 +173,15 @@ const addOrUpdateHandle = (id?: Number, row?: any) => {
 }
 
 const accountDetailList = reactive<AccountDetail[]>([]);
-const documentType =  ref('出库仓库')
+const payType =  ref('付款账户')
+const payAmount =  ref('付款金额')
 const handleRow = (row: any) =>{
-	if(row.type === '02'){
-		documentType.value = '入库仓库'
-	}else if(row.type === '03'){
-		documentType.value = '出库仓库'
+	if(row.documentType === '32'){
+		payType.value = '付款账户'
+		payAmount.value = '付款账金额'
+	}else if(row.documentType === '34'){
+		payType.value = '收款账户'
+		payAmount.value = '收款金额'
 	}
 	useGetDocumentAccountDetailApi(row.id).then(res => {
 		 accountDetailList.splice(0, accountDetailList.length, ...res.data);
@@ -204,11 +195,7 @@ const queryDataList =() =>{
 
 const addDocumentType = ref([
   { "id": '32', "name": "付款单" },
-  { "id": '34', "name": "收款单" },
-  { "id": '36', "name": "支出单" },
-  { "id": '37', "name": "收入单" },
-  { "id": '38', "name": "预付款单" },
-  { "id": '39', "name": "预收款单" }
+  { "id": '34', "name": "收款单" }
 ])
 
 const addDocumentUrl = (data: any) =>{
@@ -218,14 +205,6 @@ const addDocumentUrl = (data: any) =>{
 		
 	}else if(data.id === '34'){
 		path = '/settlement/receivePayment/index'
-	}else if(data.id === '36'){
-		path = '/settlement/expend/index'
-	}else if(data.id === '37'){
-		path = '/settlement/income/index'
-	}else if(data.id === '38'){
-		path = '/settlement/rePayment/index'
-	}else if(data.id === '39'){
-		path = '/settlement/reReceivePayment/index'
 	}
 	router.push({path})
 }

@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface IGrDocumentDetailService extends BaseService<GrDocumentDetailEntity> {
 
-    List<GrDocumentDetailVO> getlist(String documentCode);
+    List<GrDocumentDetailVO> getlist(Long documentId);
 
     List<GrDocumentDetailVO> getlistByDocumentId(Long documentId);
 

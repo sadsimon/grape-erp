@@ -1,6 +1,6 @@
 <template>
 	<div class="navbar-right">
-		<a href="https://gitee.com/crazy-code/grape-boot" target="_blank">
+		<a href="https://gitee.com/crazy-code/grape-erp" target="_blank">
 			<ma-icon icon="icon-gitee-fill-round"></ma-icon>
 		</a>
 		<Search />

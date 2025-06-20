@@ -201,6 +201,7 @@ function getChildrenIdsRecursively(node: any): any[] {
 	:deep(.el-card__header) {
 		font-weight: bold;
 		font-size: 16px;
+		color: rgb(144, 147, 153);
 	}
 	:deep(.el-card__body) {
 		padding: 0;
