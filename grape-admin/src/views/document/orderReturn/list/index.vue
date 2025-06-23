@@ -106,7 +106,7 @@
 	import { reactive, ref, onMounted, watch } from 'vue'
 	import { useBarcodeApi } from '@/api/product/product'
 	import { ElMessage } from 'element-plus/es'
-	import { dataInt } from '@/views/purchase/purchase'
+	import { DocumentDetail } from '@/views/document/index'
 	import { cloneDeep } from 'lodash-es'
 
 	const barcodeQuery = ref()
@@ -126,8 +126,8 @@
 
 	const props = defineProps({
 		initialData: {
-			type: Array as () => dataInt[],
-			default: () => [] as dataInt[]
+			type: Array as () => DocumentDetail[],
+			default: () => [] as DocumentDetail[]
 		},
 		isfinish: {
 			type: Boolean,
@@ -172,7 +172,7 @@
 	const fields = ref(['id', 'storeId', 'number', 'name', 'barcode', 'specs', 'quantity', 'unitId', 
 	'unitPrice', 'amount', 'taxRate', 'taxAmount', 'finalAmount', 'remark'])
 
-	const check = (index : number, rows : dataInt[]) => {
+	const check = (index : number, rows : DocumentDetail[]) => {
 		if (tableData.value.length === index + 1) {
 			tableData.value.splice(index, 1)
 			rows.forEach(row => {
@@ -211,7 +211,7 @@
 		})
 	}
 
-	const computedAmounts = (rows : dataInt[]) => {
+	const computedAmounts = (rows : DocumentDetail[]) => {
 		rows.forEach(row => {
 			if (row['unitPrice']) {
 				row['amount'] = row['quantity']?row['quantity'] * row['unitPrice'] : 0
@@ -245,28 +245,28 @@
 	}
 	
 	//单价（采购价）
-	const computedUnitPrice = (row : dataInt) => {
+	const computedUnitPrice = (row : DocumentDetail) => {
 		if(row['quantity']){
 			row['unitPrice'] = Number((row['amount']?row['amount'] / row['quantity'] : 0).toFixed(2))
 		}
 	}
 	
 	//金额
-	const computedAmount = (row : dataInt) => {
+	const computedAmount = (row : DocumentDetail) => {
 		if (row['unitPrice']) {
 			row['amount'] = row['quantity']?row['quantity'] * row['unitPrice'] : 0
 		}
 	}
 	
 	//税额
-	const computedTaxAmount = (row : dataInt) => {
+	const computedTaxAmount = (row : DocumentDetail) => {
 		if (row['amount']) {
 			row['taxAmount'] = row['taxRate']? (row['taxRate']/100)* row['amount'] : 0
 		}
 	}
 	
 	//税价合计
-	const computedFinalAmount = (row : dataInt) => {
+	const computedFinalAmount = (row : DocumentDetail) => {
 		if(row['amount']){
 			row['finalAmount'] = row['taxRate']? row['amount'] * (1-(row['taxRate']/100)) : row['amount']
 		}

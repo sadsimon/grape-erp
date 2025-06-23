@@ -40,7 +40,7 @@
 <script setup lang="ts">
 	import { reactive, ref, onMounted, watch } from 'vue'
 	import { ElMessage } from 'element-plus/es'
-	import { DocumentAccountDetailInt } from '@/views/settlement/settlement'
+	import { DocumentAccountDetailInt } from '@/views/document/settlement/settlement'
 
 	const barcodeQuery = ref()
 	

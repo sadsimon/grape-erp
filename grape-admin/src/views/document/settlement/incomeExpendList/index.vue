@@ -35,7 +35,7 @@
 <script setup lang="ts">
 	import { reactive, ref, onMounted, watch } from 'vue'
 	import { ElMessage } from 'element-plus/es'
-	import { dataInt } from '@/views/purchase/purchase'	
+	import { DocumentDetail } from '@/views/document/index'
 
 	interface SelectableTableMethods {
 		addRow : (index : number) => void
@@ -51,8 +51,8 @@
 
 	const props = defineProps({
 		initialData: {
-			type: Array as () => dataInt[],
-			default: () => [] as dataInt[]
+			type: Array as () => DocumentDetail[],
+			default: () => [] as DocumentDetail[]
 		},
 		isfinish: {
 			type: Boolean,

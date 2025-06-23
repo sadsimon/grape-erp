@@ -85,7 +85,7 @@
 <script setup lang="ts">
 	import { reactive, ref, onMounted, watch } from 'vue'
 	import { ElMessage } from 'element-plus/es'
-	import { documentDataInt } from '@/views/settlement/settlement'
+	import { documentDataInt } from '@/views/document/settlement/settlement'
 	import DocumentInput from '.././documentInput/index.vue'
 
 	const barcodeQuery = ref()

@@ -103,7 +103,7 @@
 	import { useDocumentSubmitApi, useGetDocumentCodeApi, useGetHistoryPayAmountApi, useDocumentApi } from '@/api/product/order'
 	import { DocumentDetail } from '@/views/document/index'
 	import { useWindowResize } from '@/views/document/useWindowResize'
-	import { SettleDetailInt, DocumentAccountDetailInt } from '@/views/settlement/settlement'
+	import { SettleDetailInt, DocumentAccountDetailInt } from '@/views/document/settlement/settlement'
 	import { Delete } from '@element-plus/icons-vue'
 	import { getCurrentDate } from '@/utils/tool'
 	import { cloneDeep } from 'lodash-es'
@@ -125,7 +125,7 @@
 		finalAmount : number | null
 		documentStatus : string
 		documentType: string
-		documentDetailList : dataInt[]
+		documentDetailList : DocumentDetail[]
 		documentSettleDetailList : SettleDetailInt[]
 		documentAccountDetailList : DocumentAccountDetailInt[]
 		documentAccountDetailListDelete : number[]
@@ -134,6 +134,7 @@
 	const initialDataForm = {
 		contactunitsId: null,
 		userId: null,
+		remark: '',
 		documentCode: '',
 		documentTime: '',
 		finalAmount: null,
@@ -144,8 +145,8 @@
 			'id': null,
 			'productId': null,
 			'storeId': null,
-			'number': '',
-			'name': '',
+			'productNumber': '',
+			'productName': '',
 			'barcode': '',
 			'specs': '',
 			'quantity': null,

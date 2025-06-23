@@ -50,7 +50,7 @@
 			<GrDocumentFoot @isArrowUp="isArrowUpFu" :maxHeight="350" height="255">
 				<el-tabs v-model="activeName" type="card">
 					<el-tab-pane label="结算信息" name="payment">
-						<DocumentList :isfinish="isfinish" :height="documentListHeigth" v-model:initialData="dataForm.documentSettleDetailList"></DocumentList>
+						<DocumentList :isfinish="isfinish" :height="footHeight" v-model:initialData="dataForm.documentSettleDetailList"></DocumentList>
 					</el-tab-pane>
 				</el-tabs>
 			</GrDocumentFoot>

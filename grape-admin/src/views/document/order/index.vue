@@ -104,7 +104,7 @@
 	import { useDocumentSubmitApi, useGetDocumentCodeApi, useGetHistoryPayAmountApi, useDocumentApi } from '@/api/product/order'
 	import { DocumentDetail } from '@/views/document/index'
 	import { useWindowResize } from '@/views/document/useWindowResize'
-	import { SettleDetailInt, DocumentAccountDetailInt } from '@/views/settlement/settlement'
+	import { SettleDetailInt, DocumentAccountDetailInt } from '@/views/document/settlement/settlement'
 	import { Delete } from '@element-plus/icons-vue'
 	import { getCurrentDate } from '@/utils/tool'
 	import { cloneDeep } from 'lodash-es'
@@ -129,7 +129,7 @@
 		documentStatus : string
 		documentType: string
 		amountType: string
-		/* documentDetailList : DocumentDetail[] */
+		documentDetailList : DocumentDetail[]
 		documentSettleDetailList : SettleDetailInt[]
 		documentAccountDetailList : DocumentAccountDetailInt[]
 		documentAccountDetailListDelete : number[]
@@ -146,7 +146,7 @@
 		documentStatus: '2',
 		documentType: documentType.value,
 		amountType: amountType.value,
-		/* documentDetailList: [{
+		documentDetailList: [{
 			'id': null,
 			'productId': null,
 			'storeId': null,
@@ -160,7 +160,7 @@
 			'amount': null,
 			'expectPurchasePrice': null,
 			
-		}], */
+		}],
 		documentSettleDetailList: [{
 			key: null,
 			id: null,

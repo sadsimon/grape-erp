@@ -104,7 +104,7 @@
 	import { useDocumentSubmitApi, useGetDocumentCodeApi, useGetHistoryPayAmountApi,useDocumentApi } from '@/api/product/order'
 	import { DocumentDetail } from '@/views/document/index'
 	import { useWindowResize } from '@/views/document/useWindowResize'
-	import { SettleDetailInt, DocumentAccountDetailInt } from '@/views/settlement/settlement'
+	import { SettleDetailInt, DocumentAccountDetailInt } from '@/views/document/settlement/settlement'
 	import { Delete } from '@element-plus/icons-vue'
 	import { getCurrentDate } from '@/utils/tool'
 	import { cloneDeep } from 'lodash-es'
@@ -148,8 +148,8 @@
 			'id': null,
 			'productId': null,
 			'storeId': null,
-			'number': '',
-			'name': '',
+			'productNumber': '',
+			'productName': '',
 			'barcode': '',
 			'specs': '',
 			'quantity': null,

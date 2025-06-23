@@ -92,7 +92,7 @@
 	import { useBarcodeApi } from '@/api/product/product'
 	import { useCurrentStock } from '@/api/product/store'
 	import { ElMessage } from 'element-plus/es'
-	import { dataInt } from '@/views/purchase/purchase'
+	import { DocumentDetail } from '@/views/document/index'
 	import { cloneDeep } from 'lodash-es'
 
 	const barcodeQuery = ref()
@@ -112,8 +112,8 @@
 
 	const props = defineProps({
 		initialData: {
-			type: Array as () => dataInt[],
-			default: () => [] as dataInt[]
+			type: Array as () => DocumentDetail[],
+			default: () => [] as DocumentDetail[]
 		},
 		isfinish: {
 			type: Boolean,
@@ -157,7 +157,7 @@
 
 	const fields = ref(['id', 'storeId', 'number', 'name', 'barcode', 'specs', 'quantity', 'unitId', 'unitPrice', 'amount'])
 
-	const check = (index : number, rows : dataInt[]) => {
+	const check = (index : number, rows : DocumentDetail[]) => {
 		if (tableData.value.length === index + 1) {
 			tableData.value.splice(index, 1)
 			rows.forEach(row => {
@@ -196,7 +196,7 @@
 		})
 	}
 
-	const computedAmounts = (rows : dataInt[]) => {
+	const computedAmounts = (rows : DocumentDetail[]) => {
 		rows.forEach(row => {
 			if (row['unitPrice']) {
 				row['amount'] = row['quantity']?row['quantity'] * row['unitPrice'] : 0
@@ -204,7 +204,7 @@
 		})
 	}
 
-	const computedAmount = (row : dataInt) => {
+	const computedAmount = (row : DocumentDetail) => {
 		if (row['unitPrice']) {
 			row['amount'] = row['quantity']?row['quantity'] * row['unitPrice'] : 0
 		}
@@ -251,7 +251,7 @@
 	}
 	
 	const refresh=()=>{
-		tableData.value.forEach((row: dataInt)=>{
+		tableData.value.forEach((row: DocumentDetail)=>{
 			useCurrentStock(row['productId'],row['storeId']).then((res: any)=>{
 				row['stockCount'] = res.data
 			})

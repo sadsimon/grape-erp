@@ -10,17 +10,17 @@ export interface DocumentDetail {
 	quantity: number | null
 	unitId: string
 	unitName?: string
-	unitPrice?: number
+	unitPrice?: number | null
 	expectPurchasePrice?: number | null
-	amount?: number
+	amount?: number | null
 	taxRate?: number | null
 	taxAmount?: number | null
 	finalAmount?: number | null
-	remark?: string
+	remark?: string | null
 	projectId?: number | null
 	inStoreId?: number | null
-	stockCount?: number
-	img?: string
+	stockCount?: number | null
+	img?: string | null
 }
 
 export interface AccountDetail {

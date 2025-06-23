@@ -117,7 +117,7 @@ import { reactive, ref, onMounted } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import { useRouter } from 'vue-router'
 import { useGetDocumentDetailApi, useGetDocumentAccountDetailApi } from '@/api/product/order'
-import { DocumentDetail,AccountDetail } from '@/views/purchase/purchase'
+import { DocumentDetail,AccountDetail } from '@/views/document/index'
 
 
 
