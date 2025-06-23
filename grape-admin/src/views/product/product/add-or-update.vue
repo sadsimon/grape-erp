@@ -135,8 +135,8 @@ const visible = ref(false)
 const dataFormRef = ref()
 const dataForm = reactive({
 	id: '',
-	number: '',
-	name: '',
+	productNumber: '',
+	productName: '',
 	barcode: '',
 	specs: '',
 	categoryId: '',
@@ -191,8 +191,8 @@ const init = async (isUpdate: boolean, id?: number) => {
 	visible.value = true
 	// 手动重置字段
 	dataForm.id = ''
-	dataForm.number = ''
-	dataForm.name = ''
+	dataForm.productNumber = ''
+	dataForm.productName = ''
 	dataForm.barcode = ''
 	dataForm.specs = ''
 	dataForm.categoryId = ''
