@@ -4,13 +4,13 @@
 		<el-form ref="dataFormRef" :model="dataForm" :rules="dataRules" label-width="100px">
 			<el-row :gutter="5">
 				<el-col :span="24" :lg="8" :md="12" :sm="24">
-					<el-form-item prop="number" label="商品编码">
-						<el-input v-model="dataForm.number"></el-input>
+					<el-form-item prop="productNumber" label="商品编码">
+						<el-input v-model="dataForm.productNumber"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="24" :lg="8" :md="12" :sm="24">
-					<el-form-item prop="name" label="商品名称">
-						<el-input v-model="dataForm.name"></el-input>
+					<el-form-item prop="productName" label="商品名称">
+						<el-input v-model="dataForm.productName"></el-input>
 					</el-form-item>
 				</el-col>
 				<el-col :span="24" :lg="8" :md="12" :sm="24">

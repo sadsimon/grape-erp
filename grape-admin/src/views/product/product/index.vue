@@ -57,8 +57,8 @@
 							<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 						</template>
 					</el-table-column>
-					<el-table-column v-if="state.field?.number" prop="number" min-width="90px" label="商品编码" header-align="center" align="center"> </el-table-column>
-					<el-table-column v-if="state.field?.name" prop="name" min-width="90px" label="商品名称" header-align="center" align="center"></el-table-column>
+					<el-table-column v-if="state.field?.productNumber" prop="productNumber" min-width="90px" label="商品编码" header-align="center" align="center"> </el-table-column>
+					<el-table-column v-if="state.field?.productName" prop="productName" min-width="90px" label="商品名称" header-align="center" align="center"></el-table-column>
 					<el-table-column prop="img" label="图片" class-name="column-image" header-align="center" align="center">
 						<template #default="scope">
 							<el-popover v-if="scope.row['imgList'][0]" placement="right" :width="278">
