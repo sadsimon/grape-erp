@@ -16,6 +16,10 @@
         WHERE
         t.deleted = 0
 
+        <if test="documentCode != null and documentCode.trim() != ''">
+            and t.document_code like CONCAT('%', #{documentCode}, '%')
+        </if>
+
         <if test="contactunitsId != null">
             and t.contactunits_id = #{contactunitsId}
         </if>

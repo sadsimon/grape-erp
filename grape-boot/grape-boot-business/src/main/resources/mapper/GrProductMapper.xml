@@ -31,8 +31,8 @@
         t.deleted = 0
 
         <if test="param != null and param.trim() != ''">
-            and (t.number like CONCAT('%', #{param}, '%')
-            or t.`name` like CONCAT('%', #{param}, '%')
+            and (t.product_number like CONCAT('%', #{param}, '%')
+            or t.`product_name` like CONCAT('%', #{param}, '%')
             or e.barcode like CONCAT('%', #{param}, '%')
             or t.specs like CONCAT('%', #{param}, '%')
             or r.contactunits_name like CONCAT('%', #{param}, '%')

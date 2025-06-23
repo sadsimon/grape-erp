@@ -19,8 +19,8 @@
 
     <select id="checkList" resultType="net.grape.product.vo.GrProductBarcodeCheckVO">
         SELECT
-            e.*, t.`name`,
-            t.number,
+            e.*, t.`product_name`,
+            t.product_number,
             t.specs,
             k.stock_count,
             y.category_name,
@@ -43,8 +43,8 @@
             e.deleted = 0
 
         <if test="param != null and param.trim() != ''">
-            and (t.number like CONCAT('%', #{param}, '%')
-            or t.`name` like CONCAT('%', #{param}, '%')
+            and (t.product_number like CONCAT('%', #{param}, '%')
+            or t.`product_name` like CONCAT('%', #{param}, '%')
             or e.barcode like CONCAT('%', #{param}, '%')
             or t.specs like CONCAT('%', #{param}, '%')
             or r.contactunits_name like CONCAT('%', #{param}, '%')
@@ -64,8 +64,8 @@
 
     <select id="checkListNoStoreId" resultType="net.grape.product.vo.GrProductBarcodeCheckVO">
         SELECT
-        e.*, t.`name`,
-        t.number,
+        e.*, t.`product_name`,
+        t.product_number,
         t.specs,
         k.stock_count,
         y.category_name,
@@ -88,8 +88,8 @@
         e.deleted = 0
 
         <if test="param != null and param.trim() != ''">
-            and (t.number like CONCAT('%', #{param}, '%')
-            or t.`name` like CONCAT('%', #{param}, '%')
+            and (t.product_number like CONCAT('%', #{param}, '%')
+            or t.`product_name` like CONCAT('%', #{param}, '%')
             or e.barcode like CONCAT('%', #{param}, '%')
             or t.specs like CONCAT('%', #{param}, '%')
             or r.contactunits_name like CONCAT('%', #{param}, '%')
@@ -106,8 +106,8 @@
 
     <select id="getByBarcode" resultType="net.grape.product.vo.GrProductBarcodeCheckVO">
         SELECT
-        e.*, t.`name`,
-        t.number,
+        e.*, t.`product_name`,
+        t.product_number,
         t.specs,
         y.category_name,
         d.brand_name,
@@ -135,8 +135,8 @@
 
     <select id="getListByBarcode" resultType="net.grape.product.vo.GrProductBarcodeCheckVO">
         SELECT
-        e.*, t.`name`,
-        t.number,
+        e.*, t.`product_name`,
+        t.product_number,
         t.specs,
         y.category_name,
         d.brand_name,

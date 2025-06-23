@@ -131,6 +131,12 @@ public class GrDocumentDetailVO  implements Serializable {
     private BigDecimal amount;
 
     /**
+     * 备注
+     */
+    @Schema(description = "备注")
+    private String remark;
+
+    /**
      * 图片列表
      */
     @Schema(description = "图片列表")

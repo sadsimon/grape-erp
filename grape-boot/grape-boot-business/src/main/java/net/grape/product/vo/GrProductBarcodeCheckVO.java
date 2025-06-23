@@ -92,13 +92,13 @@ public class GrProductBarcodeCheckVO implements Serializable {
      * 商品编码
      */
     @Schema(description = "商品编码")
-    private String number;
+    private String productNumber;
 
     /**
      * 商品名称
      */
     @Schema(description = "商品名称")
-    private String name;
+    private String productName;
 
     @Schema(description = "类别名称")
     private String categoryName;

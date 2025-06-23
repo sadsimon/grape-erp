@@ -14,7 +14,7 @@ import lombok.Setter;
  * </p>
  *
  * @author 疯狂的老码
- * @since 2025-06-04
+ * @since 2025-06-23
  */
 @Getter
 @Setter
@@ -59,7 +59,7 @@ public class GrDocumentEntity extends BaseEntity {
     private String reviewStatus;
 
     /**
-     * 类型  01：采购订单  02：采购单  03：采购退货单  11：报价单  12：销货订单  13：销货单  14：销货退货单  21：调拨单  22：其他入库单  23：其他出库单  24：成本调整单  25：组装单  26：拆卸单 32：付款单 34：收款单 36：费用单 37：其他收入单
+     * 类型  01：采购订单  02：采购单  03：采购退货单  11：报价单  12：销货订单  13：销货单  14：销货退货单  21：调拨单  22：其他入库单  23：其他出库单  24：成本调整单  25：组装单  26：拆卸单 32：付款单 34：收款单 36：支出单 37：收入单 38：预付款单 39：预收款单	
      */
     private String documentType;
 
@@ -87,4 +87,9 @@ public class GrDocumentEntity extends BaseEntity {
      * 类型  1：收入; 2:支出
      */
     private String amountType;
+
+    /**
+     * 备注
+     */
+    private String remark;
 }

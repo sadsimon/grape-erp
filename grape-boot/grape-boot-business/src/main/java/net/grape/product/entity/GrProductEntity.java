@@ -12,7 +12,7 @@ import lombok.Setter;
  * </p>
  *
  * @author 疯狂的老码
- * @since 2025-06-04
+ * @since 2025-06-23
  */
 @Getter
 @Setter
@@ -24,12 +24,12 @@ public class GrProductEntity extends BaseEntity {
     /**
      * 商品编码
      */
-    private String number;
+    private String productNumber;
 
     /**
      * 商品名称
      */
-    private String name;
+    private String productName;
 
     /**
      * 条码

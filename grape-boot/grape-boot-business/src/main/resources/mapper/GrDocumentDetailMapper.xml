@@ -4,8 +4,8 @@
 
     <select id="getlist" resultType="net.grape.order.vo.GrDocumentDetailVO">
         SELECT
-        t. NAME product_name,
-        t.number product_number,
+        t.product_name,
+        t.product_number,
         ut.`name` unitName,
         e.store_name,
         d.name project_name,

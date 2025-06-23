@@ -1,6 +1,6 @@
 <template>
 	<div class="product-input">
-		<el-autocomplete :key="visible + ''" class="input-with-search" v-model="barcode" :disabled :clearable :trigger-on-focus="false" :placeholder
+		<el-autocomplete :key="visible + ''" class="input-with-search" v-model="barcode" :disabled :clearable :style="{ width: width }" :trigger-on-focus="false" :placeholder
 			:fetch-suggestions="querySearch" @select="handleSelect" @clear="barcode = ''" @blur="handleInput"
 			:debounce="200">
 			<template #loading>
@@ -50,6 +50,11 @@
 		inputValue: {
 			type: String,
 			required: false
+		},
+		width: {
+			type: String,
+			required: false,
+			default: '100%'
 		}
 	})
 

@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@Schema(description = "期初")
+@Schema(description = "期初库存")
 public class ProductStockVO {
 
     /**

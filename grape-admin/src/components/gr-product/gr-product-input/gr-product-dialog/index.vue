@@ -47,8 +47,8 @@
 					>
 						<el-table-column v-if="multiple" type="selection" header-align="center" align="center" width="50"></el-table-column>
 						<el-table-column prop="barcode" label="包装条码" min-width="100px" header-align="center" align="center"></el-table-column>
-						<el-table-column prop="number" label="商品编码" min-width="100px" header-align="center" align="center"></el-table-column>
-						<el-table-column prop="name" label="商品名称" min-width="100px" header-align="center" align="center"></el-table-column>
+						<el-table-column prop="productNumber" label="商品编码" min-width="100px" header-align="center" align="center"></el-table-column>
+						<el-table-column prop="productName" label="商品名称" min-width="100px" header-align="center" align="center"></el-table-column>
 						<el-table-column prop="categoryName" label="类别" header-align="center" align="center"></el-table-column>
 						<el-table-column prop="specs" label="规格" header-align="center" align="center"></el-table-column>
 						<el-table-column prop="unitName" label="单位" header-align="center" align="center"></el-table-column>
