@@ -56,6 +56,7 @@
 					:data="state.dataList"
 					border
 					class="layout-table"
+					highlight-current-row
 					@selection-change="selectionChangeHandle"
 					@row-click="handleRow"
 					:height="tableHeight"

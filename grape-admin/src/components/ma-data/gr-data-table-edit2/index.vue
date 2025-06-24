@@ -23,7 +23,6 @@ const props = defineProps({
 		type: Array as () => SummaryConfig[],
 		default: () => []
 	},
-	//上下被占用高度，本组件高度=窗口高度-占用高度
 	height: {
 		type: Number,
 		default: 500
@@ -46,21 +45,6 @@ watch(
 		console.log(tableHeight.value)
 	}
 )
-/* // 更新表格高度的方法
-const updateTableHeight = () => {
-	tableHeight.value = window.innerHeight - occupyHeight.value
-}
-
-// 在组件挂载时初始化高度，并监听窗口大小变化
-onMounted(() => {
-	updateTableHeight() // 初始化高度
-	window.addEventListener('resize', updateTableHeight) // 监听窗口大小变化
-}) */
-
-// 在组件卸载时移除事件监听
-/* onUnmounted(() => {
-	window.removeEventListener('resize', updateTableHeight)
-}) */
 
 // 表格数据
 const tableData = ref([...props.initialData])

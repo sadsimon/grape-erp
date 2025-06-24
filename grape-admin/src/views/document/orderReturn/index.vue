@@ -256,8 +256,8 @@
 	const finalAmount = computed(() =>{
 		return dataForm.value.documentDetailList.reduce((sum, item) => {
 			// 将 amount 转换为数字，如果是字符串
-			const amount = Number(item.amount) || 0
-			return sum + amount
+			const finalAmount = Number(item.finalAmount) || 0
+			return sum + finalAmount
 		}, 0)
 	})
 	

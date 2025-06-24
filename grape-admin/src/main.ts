@@ -7,7 +7,6 @@ import { directive } from './utils/directive'
 import { router } from './router'
 import { i18n } from './i18n'
 import 'virtual:svg-icons-register'
-
 import '@/icons/iconfont/iconfont'
 import 'element-plus/dist/index.css'
 import '@/styles/index.scss'

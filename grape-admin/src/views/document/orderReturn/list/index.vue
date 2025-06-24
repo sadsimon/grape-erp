@@ -11,9 +11,10 @@
 			
 		<GrSelectableTable  :height="listHeight" ref="tableRef" :initial-data="tableData" :fields="fields" :summaries="showSummaries">
 			<template #columns>
-				<el-table-column label="操作" align="center" width="100" v-if="!isfinish">
+				<el-table-column type="index" align="center" width="40" />
+				<el-table-column label="操作" align="center" width="50" v-if="!isfinish">
 					<template #default="scope">
-						<el-space :size="15">
+						<el-space :size="10">
 							<ma-icon icon="icon-insert" style="cursor: pointer"
 								@click="tableRef?.addRow(scope.$index)"></ma-icon>
 							<ma-icon icon="icon-line" style="cursor: pointer"
@@ -79,14 +80,13 @@
 				</el-table-column>
 				<el-table-column prop="taxAmount" align="center" label="税额">
 					<template #default="scope">
-						<gr-number-input :disabled="isfinish" v-model="scope.row['taxAmount']"
-							@input="changeAmount(scope.$index)"></gr-number-input>
+							<div class="text-with-border">{{ scope.row.taxAmount }}</div>
 					</template>
 				</el-table-column>
 				<el-table-column prop="finalAmount" align="center" label="税价合计">
 					<template #default="scope">
 						<gr-number-input :disabled="isfinish" v-model="scope.row['finalAmount']"
-							@input="changeAmount(scope.$index)"></gr-number-input>
+							@input="changeFinalAmount(scope.$index)"></gr-number-input>
 					</template>
 				</el-table-column>
 				<el-table-column prop="remark" align="center" label="备注">
@@ -142,7 +142,7 @@
 
 	const isfinish = ref(props.isfinish)
 
-// 初始数据
+	// 初始数据
 	const tableData = ref(props.initialData)
 	
 	watch(
@@ -202,9 +202,11 @@
 						tableData.value.splice(tableData.value.length - 1, 1)
 					}
 					res.data['quantity'] = 1
+					res.data['unitPrice'] = res.data.expectPurchasePrice
 					tableData.value.push(res.data)
 				}
-				computedAmount(tableData.value[existingIndex])
+				computedAmounts(tableData.value)
+				
 				emit('update:initialData', tableData)
 			}
 			barcodeQuery.value = null
@@ -213,9 +215,9 @@
 
 	const computedAmounts = (rows : DocumentDetail[]) => {
 		rows.forEach(row => {
-			if (row['unitPrice']) {
-				row['amount'] = row['quantity']?row['quantity'] * row['unitPrice'] : 0
-			}
+			computedAmount(row)
+			computedTaxAmount(row)
+			computedFinalAmount(row)
 		})
 	}
 
@@ -244,6 +246,21 @@
 		computedFinalAmount(row)
 	}
 	
+	//修改税价合计
+	const changeFinalAmount = (index : number) => {
+		const row = tableData.value[index]
+		computedAmountByFinalAmount(row)
+		computedUnitPrice(row)
+	}
+	
+	//通过税价合计计算金额
+	const computedAmountByFinalAmount = (row : DocumentDetail) => {
+		computedTaxAmount(row)
+		if(row['taxAmount'] ){
+			row['amount'] = row['finalAmount']? row['finalAmount'] - row['taxAmount'] : 0
+		}
+	}
+	
 	//单价（采购价）
 	const computedUnitPrice = (row : DocumentDetail) => {
 		if(row['quantity']){
@@ -261,14 +278,14 @@
 	//税额
 	const computedTaxAmount = (row : DocumentDetail) => {
 		if (row['amount']) {
-			row['taxAmount'] = row['taxRate']? (row['taxRate']/100)* row['amount'] : 0
+			row['taxAmount'] = Number((row['taxRate']? (row['taxRate']/100)* row['amount'] : 0).toFixed(2))
 		}
 	}
 	
 	//税价合计
 	const computedFinalAmount = (row : DocumentDetail) => {
 		if(row['amount']){
-			row['finalAmount'] = row['taxRate']? row['amount'] * (1-(row['taxRate']/100)) : row['amount']
+			row['finalAmount'] = row['taxRate']? row['amount'] * (1+(row['taxRate']/100)) : row['amount']
 		}
 	}
 	

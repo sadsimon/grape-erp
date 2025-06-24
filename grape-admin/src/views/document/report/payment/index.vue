@@ -57,6 +57,7 @@
 					border
 					class="layout-table"
 					@selection-change="selectionChangeHandle"
+					highlight-current-row
 					@row-click="handleRow"
 					:height="tableHeight"
 				>

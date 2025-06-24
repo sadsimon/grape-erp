@@ -42,3 +42,14 @@ export interface DocumentAccountDetailInt {
 	amountType: string
 	remark: string
 }
+
+/**
+ * 结算单据支付预付款详情
+ */
+export interface DocumentAdvanceDetailInt {
+	key: number | null
+	contactunitsId: number
+	amount: number | null
+	amountType: string
+	remark: string | null
+}

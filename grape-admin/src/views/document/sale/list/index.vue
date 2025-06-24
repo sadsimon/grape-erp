@@ -11,9 +11,10 @@
 			
 		<GrSelectableTable  :height="listHeight" ref="tableRef" :initial-data="tableData" :fields="fields" :summaries="showSummaries">
 			<template #columns>
-				<el-table-column label="操作" align="center" width="100" v-if="!isfinish">
+				<el-table-column type="index" align="center" width="40" />
+				<el-table-column label="操作" align="center" width="50" v-if="!isfinish">
 					<template #default="scope">
-						<el-space :size="15">
+						<el-space :size="10">
 							<ma-icon icon="icon-insert" style="cursor: pointer"
 								@click="tableRef?.addRow(scope.$index)"></ma-icon>
 							<ma-icon icon="icon-line" style="cursor: pointer"
@@ -21,12 +22,12 @@
 						</el-space>
 					</template>
 				</el-table-column>
-				<el-table-column prop="storeId" align="center" label="发货仓库">
+				<el-table-column prop="storeId" align="center" label="收货仓库" min-width="120px">
 					<template #default="scope">
 						<GrStoreInput :disabled="isfinish" v-model="scope.row['storeId']" readonly></GrStoreInput>
 					</template>
 				</el-table-column>
-				<el-table-column prop="barcode" align="center" label="包装条码">
+				<el-table-column prop="barcode" align="center" label="包装条码" min-width="130px">
 					<template #default="scope">
 						<GrProductInput :disabled="isfinish" to-teleport="#dialog-container" :clearable="false"
 							:multiple="scope.$index === tableData.length - 1" @select="check(scope.$index, $event)"
@@ -38,14 +39,14 @@
 						<div class="text-with-border">{{ scope.row.unitName }}</div>
 					</template>
 				</el-table-column>
-				<el-table-column prop="number" align="center" label="商品编码">
+				<el-table-column prop="productNumber" align="center" label="商品编码">
 					<template #default="scope">
-						<div class="text-with-border">{{ scope.row.number }}</div>
+						<div class="text-with-border">{{ scope.row.productNumber }}</div>
 					</template>
 				</el-table-column>
-				<el-table-column prop="name" align="center" label="商品名称">
+				<el-table-column prop="productName" align="center" label="商品名称">
 					<template #default="{ row }">
-						<div class="text-with-border">{{ row.name }}</div>
+						<div class="text-with-border">{{ row.productName }}</div>
 					</template>
 				</el-table-column>
 				<el-table-column class-name="el-table-column-text" prop="specs" align="center" label="规格">
@@ -59,16 +60,40 @@
 							@input="changeQuantity(scope.$index)"></gr-number-input>
 					</template>
 				</el-table-column>
-				<el-table-column prop="unitPrice" align="center" label="销售价">
+				<el-table-column prop="unitPrice" align="center" label="采购价">
 					<template #default="scope">
 						<gr-number-input :disabled="isfinish" v-model="scope.row['unitPrice']"
-							@input="changePurchasePrice(scope.$index)"></gr-number-input>
+							@input="changeUnitPrice(scope.$index)"></gr-number-input>
 					</template>
 				</el-table-column>
 				<el-table-column prop="amount" align="center" label="金额">
 					<template #default="scope">
 						<gr-number-input :disabled="isfinish" v-model="scope.row['amount']"
 							@input="changeAmount(scope.$index)"></gr-number-input>
+					</template>
+				</el-table-column>
+				<el-table-column prop="taxRate" align="center" label="税率">
+					<template #default="scope">
+						<gr-number-input :disabled="isfinish" v-model="scope.row['taxRate']" placeholder="%"
+							@input="changeAmount(scope.$index)"></gr-number-input>
+					</template>
+				</el-table-column>
+				<el-table-column prop="taxAmount" align="center" label="税额">
+					<template #default="scope">
+							<div class="text-with-border">{{ scope.row.taxAmount }}</div>
+					</template>
+				</el-table-column>
+				<el-table-column prop="finalAmount" align="center" label="税价合计">
+					<template #default="scope">
+						<gr-number-input :disabled="isfinish" v-model="scope.row['finalAmount']"
+							@input="changeFinalAmount(scope.$index)"></gr-number-input>
+					</template>
+				</el-table-column>
+				<el-table-column prop="remark" align="center" label="备注">
+					<template #default="scope">
+						<el-input
+						    v-model="scope.row['remark']"
+						  />
 					</template>
 				</el-table-column>
 			</template>
@@ -82,6 +107,7 @@
 	import { useBarcodeApi } from '@/api/product/product'
 	import { ElMessage } from 'element-plus/es'
 	import { DocumentDetail } from '@/views/document/index'
+	import { cloneDeep } from 'lodash-es'
 
 	const barcodeQuery = ref()
 	
@@ -115,32 +141,36 @@
 	})
 
 	const isfinish = ref(props.isfinish)
+
 	// 初始数据
 	const tableData = ref(props.initialData)
+	
 	watch(
 		() => props.isfinish,
 		newVal => {
 			isfinish.value = newVal
 		}
 	)
-
+	
 	watch(
 		() => props.initialData,
 		newVal => {
 			tableData.value = newVal
 		}
 	)
-	const emit = defineEmits(['update:initialData'])
 
-	
+	const emit = defineEmits(['update:initialData'])
 
 	//合计行
 	const showSummaries = ref<SummaryConfig[]>([
 		{ prop: 'quantity', decimal: 0 },
-		{ prop: 'amount', decimal: 2 }
+		{ prop: 'amount', decimal: 2 },
+		{ prop: 'taxAmount', decimal: 2 },
+		{ prop: 'finalAmount', decimal: 2 },
 	])
 
-	const fields = ref(['id', 'storeId', 'number', 'name', 'barcode', 'specs', 'quantity', 'unitId', 'unitPrice', 'amount'])
+	const fields = ref(['id', 'storeId', 'number', 'name', 'barcode', 'specs', 'quantity', 'unitId', 
+	'unitPrice', 'amount', 'taxRate', 'taxAmount', 'finalAmount', 'remark'])
 
 	const check = (index : number, rows : DocumentDetail[]) => {
 		if (tableData.value.length === index + 1) {
@@ -156,7 +186,7 @@
 			tableData.value[index] = rows[0]
 		}
 		computedAmounts(rows)
-		emit('update:initialData', tableData.value)
+		emit('update:initialData', tableData)
 	}
 
 	const checkByBarcode = () => {
@@ -172,10 +202,12 @@
 						tableData.value.splice(tableData.value.length - 1, 1)
 					}
 					res.data['quantity'] = 1
+					res.data['unitPrice'] = res.data.expectPurchasePrice
 					tableData.value.push(res.data)
 				}
-				computedAmount(tableData.value[existingIndex])
-				emit('update:initialData', tableData.value)
+				computedAmounts(tableData.value)
+				
+				emit('update:initialData', tableData)
 			}
 			barcodeQuery.value = null
 		})
@@ -183,41 +215,78 @@
 
 	const computedAmounts = (rows : DocumentDetail[]) => {
 		rows.forEach(row => {
-			if (row['unitPrice']) {
-				row['amount'] = row['quantity']?row['quantity'] * row['unitPrice'] : 0
-			}
+			computedAmount(row)
+			computedTaxAmount(row)
+			computedFinalAmount(row)
 		})
 	}
 
+
+	//修改数量
+	const changeQuantity = (index : number) => {
+		const row = tableData.value[index]
+		computedAmount(row)
+		computedTaxAmount(row)
+		computedFinalAmount(row)
+	}
+	
+	//修改单价
+	const changeUnitPrice = (index : number) => {
+		const row = tableData.value[index]
+		computedAmount(row)
+		computedTaxAmount(row)
+		computedFinalAmount(row)
+	}
+	
+	//修改金额
+	const changeAmount = (index : number) => {
+		const row = tableData.value[index]
+		computedUnitPrice(row)
+		computedTaxAmount(row)
+		computedFinalAmount(row)
+	}
+	
+	//修改税价合计
+	const changeFinalAmount = (index : number) => {
+		const row = tableData.value[index]
+		computedAmountByFinalAmount(row)
+		computedUnitPrice(row)
+	}
+	
+	//通过税价合计计算金额
+	const computedAmountByFinalAmount = (row : DocumentDetail) => {
+		computedTaxAmount(row)
+		if(row['taxAmount'] ){
+			row['amount'] = row['finalAmount']? row['finalAmount'] - row['taxAmount'] : 0
+		}
+	}
+	
+	//单价（采购价）
+	const computedUnitPrice = (row : DocumentDetail) => {
+		if(row['quantity']){
+			row['unitPrice'] = Number((row['amount']?row['amount'] / row['quantity'] : 0).toFixed(2))
+		}
+	}
+	
+	//金额
 	const computedAmount = (row : DocumentDetail) => {
 		if (row['unitPrice']) {
 			row['amount'] = row['quantity']?row['quantity'] * row['unitPrice'] : 0
 		}
 	}
-
-	const changeQuantity = (index : number) => {
-		const row = tableData.value[index];
-		  if (row['quantity'] === null || row['quantity'] === undefined || row['unitPrice'] === null || row['unitPrice'] === undefined) {
-		    row['amount'] = 0;
-		  } else {
-		    row['amount'] = row['quantity'] * row['unitPrice'];
-		  }
+	
+	//税额
+	const computedTaxAmount = (row : DocumentDetail) => {
+		if (row['amount']) {
+			row['taxAmount'] = Number((row['taxRate']? (row['taxRate']/100)* row['amount'] : 0).toFixed(2))
+		}
 	}
-	const changePurchasePrice = (index : number) => {
-		const row = tableData.value[index];
-		  if (row['quantity'] === null || row['quantity'] === undefined || row['unitPrice'] === null || row['unitPrice'] === undefined) {
-		    row['amount'] = 0;
-		  } else {
-		    row['amount'] = row['quantity'] * row['unitPrice'];
-		  }
-	}
-	const changeAmount = (index : number) => {
-		const row = tableData.value[index];
-		  if (row['amount'] === null || row['amount'] === undefined || row['quantity'] === null || row['quantity'] === undefined) {
-		    row['unitPrice'] = 0;
-		  } else {
-		    row['unitPrice'] = Number((row['amount'] / row['quantity']).toFixed(2))
-		  }
+	
+	//税价合计
+	const computedFinalAmount = (row : DocumentDetail) => {
+		if(row['amount']){
+			row['finalAmount'] = row['taxRate']? row['amount'] * (1+(row['taxRate']/100)) : row['amount']
+		}
 	}
 	
 	 //计算高度

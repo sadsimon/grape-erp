@@ -16,6 +16,7 @@
     "@wangeditor/editor": "5.1.23",
     "@wangeditor/editor-for-vue": "5.1.12",
     "axios": "1.7.7",
+    "big.js": "^7.0.1",
     "cropperjs": "1.6.1",
     "echarts": "5.5.0",
     "element-plus": "2.8.5",
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "@babel/types": "7.24.0",
+    "@types/big.js": "^6.2.2",
     "@types/node": "20.11.28",
     "@types/nprogress": "0.2.3",
     "@types/qs": "6.9.12",
