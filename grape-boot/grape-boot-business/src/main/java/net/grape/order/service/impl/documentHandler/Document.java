@@ -11,22 +11,28 @@ import java.util.List;
 
 public interface Document {
 
-    List<GrDocumentDetailVO> makeDocumentDetail();
+    /**
+     * 组装单据详情
+     * @param documentVO
+     * @return
+     */
+    GrDocumentVO makeDocumentDetail(GrDocumentVO documentVO);
     /**
      * 组装支付列表
      */
-    List<GrDocumentSettleDetailVO> makeSettleDetail();
+    GrDocumentVO makeSettleDetail(GrDocumentVO documentVO);
 
     /**
      * 组装支付账户列表
      */
-    List<GrDocumentAccountDetailVO> makeAccountDetail();
+    GrDocumentVO makeAccountDetail(GrDocumentVO documentVO);
 
     /**
      * 库存计算
      */
-    Long stock();
+    void stock();
 
-    Boolean isNeedStock();
+    void isNeedStock();
 
+    DocumentConfig getDocumentConfig();
 }

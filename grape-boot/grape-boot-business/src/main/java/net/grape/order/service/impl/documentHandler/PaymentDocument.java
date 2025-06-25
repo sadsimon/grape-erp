@@ -1,47 +1,55 @@
 package net.grape.order.service.impl.documentHandler;
 
-import lombok.Data;
-import net.grape.order.vo.GrDocumentAccountDetailVO;
-import net.grape.order.vo.GrDocumentDetailVO;
-import net.grape.order.vo.GrDocumentSettleDetailVO;
 import net.grape.order.vo.GrDocumentVO;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * 32：付款单 34：收款单
+ */
 public class PaymentDocument implements Document{
 
-    private final GrDocumentVO documentVO;
+    private final DocumentConfig documentConfig;
 
     public PaymentDocument(GrDocumentVO documentVO){
-        this.documentVO = documentVO;
+        this.documentConfig = new DocumentConfig();
+        this.makeDocumentDetail(documentVO);
+        this.makeSettleDetail(documentVO);
+        this.makeAccountDetail(documentVO);
+        this.documentConfig.setDocumentVO(documentVO);
+        stock();
+        isNeedStock();
     }
 
     @Override
-    public List<GrDocumentDetailVO> makeDocumentDetail() {
-        return new ArrayList<GrDocumentDetailVO>();
+    public GrDocumentVO makeDocumentDetail(GrDocumentVO documentVO) {
+        return documentVO;
     }
 
     @Override
-    public List<GrDocumentSettleDetailVO> makeSettleDetail() {
+    public GrDocumentVO makeSettleDetail(GrDocumentVO documentVO) {
         documentVO.getDocumentSettleDetailList().stream().forEach(settleDetail ->{settleDetail.setAmountType(documentVO.getAmountType());});
-        return documentVO.getDocumentSettleDetailList();
+        return documentVO;
     }
 
     @Override
-    public List<GrDocumentAccountDetailVO> makeAccountDetail() {
-        documentVO.getDocumentAccountDetailList().stream().forEach(accountDetail ->{accountDetail.setAmountType(documentVO.getAmountType());});
-        return documentVO.getDocumentAccountDetailList();
+    public GrDocumentVO makeAccountDetail(GrDocumentVO documentVO) {
+        documentVO.getDocumentAccountDetailList().stream().forEach(accountDetail ->{
+            accountDetail.setAmountType(documentVO.getAmountType());
+            accountDetail.setAccountType("1");});
+        return documentVO;
     }
 
     @Override
-    public Long stock() {
-        return 0L;
+    public void stock() {
+        documentConfig.setStock(0L);
     }
 
     @Override
-    public Boolean isNeedStock() {
-        return false;
+    public void isNeedStock() {
+        documentConfig.setIsNeedStock(false);
+    }
+
+    @Override
+    public DocumentConfig getDocumentConfig() {
+        return documentConfig;
     }
 }

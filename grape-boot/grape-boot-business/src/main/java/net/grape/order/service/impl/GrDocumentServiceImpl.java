@@ -3,6 +3,7 @@ package net.grape.order.service.impl;
 import cn.hutool.core.util.NumberUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.AllArgsConstructor;
+import net.grape.enums.DocumentEnum;
 import net.grape.framework.common.constant.Constant;
 import net.grape.framework.common.utils.PageResult;
 import net.grape.order.convert.GrDocumentConvert;
@@ -15,6 +16,7 @@ import net.grape.order.service.IGrDocumentService;
 import net.grape.framework.mybatis.service.impl.BaseServiceImpl;
 import net.grape.order.service.IGrDocumentSettleDetailService;
 import net.grape.order.service.impl.documentHandler.Document;
+import net.grape.order.service.impl.documentHandler.DocumentConfig;
 import net.grape.order.service.impl.documentHandler.ExecuteFactory;
 import net.grape.order.vo.GrDocumentAccountDetailVO;
 import net.grape.order.vo.GrDocumentDetailVO;
@@ -45,7 +47,7 @@ public class GrDocumentServiceImpl extends BaseServiceImpl<GrDocumentMapper, GrD
     private final IGrDocumentSettleDetailService iGrDocumentSettleDetailService;
     private final IGrDocumentAccountDetailService iGrDocumentAccountDetailService;
     private final IGrContactunitsService iGrContactunitsService;
-    private final ExecuteFactory executeFactory;
+    //private final ExecuteFactory executeFactory;
 
     @Override
     public PageResult<GrDocumentVO> page(DocumentQuery query) {
@@ -103,58 +105,56 @@ public class GrDocumentServiceImpl extends BaseServiceImpl<GrDocumentMapper, GrD
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void save(GrDocumentVO vo) {
-        Document document = executeFactory.createDocument(vo);
+        DocumentConfig documentConfig = ExecuteFactory.getDocument(vo).getDocumentConfig();
+        vo = documentConfig.getDocumentVO();
         GrDocumentEntity grDocumentEntity = GrDocumentConvert.INSTANCE.convert(vo);
         baseMapper.insert(grDocumentEntity);
-        iGrDocumentDetailService.saveOrUpdateList(document.makeDocumentDetail(),vo.getDocumentCode(), grDocumentEntity.getId());
-        //计算库存和保存库存
-        if(vo.getDocumentDetailList() != null && !vo.getDocumentDetailList().isEmpty() && document.isNeedStock()) {
+        iGrDocumentDetailService.saveOrUpdateList(vo.getDocumentDetailList(), vo.getDocumentCode(), grDocumentEntity.getId());
+        //计算和保存库存
+        if(vo.getDocumentDetailList() != null && !vo.getDocumentDetailList().isEmpty() && documentConfig.getIsNeedStock()) {
+            GrDocumentVO finalVo = vo;
             vo.getDocumentDetailList().stream().forEach(detail -> {
-                iGrCurrentStockService.updateStock(vo.getDocumentType(),detail.getProductId(), detail.getStoreId(), detail.getInStoreId(), detail.getUnitId(), detail.getQuantity(),true);
+                iGrCurrentStockService.updateStock(finalVo.getDocumentType(), detail.getProductId(), detail.getStoreId(), detail.getInStoreId(), detail.getUnitId(), detail.getQuantity(),true);
             });
         }
         //单据付款详情
         vo.setId(grDocumentEntity.getId());
-        iGrDocumentSettleDetailService.saveOrUpdateList(document.makeSettleDetail(),grDocumentEntity.getId());
+        iGrDocumentSettleDetailService.saveOrUpdateList(vo.getDocumentSettleDetailList(),grDocumentEntity.getId());
         //账户收款/扣款
-        iGrDocumentAccountDetailService.saveOrUpdateList(document.makeAccountDetail(),grDocumentEntity.getId());
-        //预收款/预付款
-        BigDecimal totalAmount = vo.getDocumentAccountDetailList().stream()
-                .map(accountDetail -> accountDetail.getAmount())
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        iGrContactunitsService.updateAdvance(vo.getContactunitsId(), totalAmount, vo.getDocumentType());
+        iGrDocumentAccountDetailService.saveOrUpdateList(vo.getDocumentAccountDetailList(),grDocumentEntity.getId());
+        //预付款、预收款
+        iGrContactunitsService.updateAdvanceIn(vo.getContactunitsId(), vo.getAdvanceAmount(), vo.getDocumentType());
+        iGrContactunitsService.updateAdvanceIOut(vo.getContactunitsId(), vo.getAdvanceAmount(), vo.getDocumentType());
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(GrDocumentVO vo) {
-        Document document = executeFactory.createDocument(vo);
+        DocumentConfig documentConfig = ExecuteFactory.getDocument(vo).getDocumentConfig();
+        vo = documentConfig.getDocumentVO();
         //还原库存
-        returnStock(vo.getId(),document.isNeedStock());
+        returnStock(vo.getId(),documentConfig.getIsNeedStock());
         //还原预付款/预收款
         returnAdvance(vo.getId(),vo.getContactunitsId(), vo.getDocumentType());
 
         GrDocumentEntity grDocumentEntity = GrDocumentConvert.INSTANCE.convert(vo);
         updateById(grDocumentEntity);
-        iGrDocumentDetailService.saveOrUpdateList(document.makeDocumentDetail(),vo.getDocumentCode(), grDocumentEntity.getId());
+        iGrDocumentDetailService.saveOrUpdateList(vo.getDocumentDetailList(),vo.getDocumentCode(), grDocumentEntity.getId());
         //计算库存和保存库存
-        if(vo.getDocumentDetailList() != null && !vo.getDocumentDetailList().isEmpty() && document.isNeedStock()) {
+        if(vo.getDocumentDetailList() != null && !vo.getDocumentDetailList().isEmpty() && documentConfig.getIsNeedStock()) {
+            GrDocumentVO finalVo = vo;
             vo.getDocumentDetailList().stream().forEach(detail -> {
-                iGrCurrentStockService.updateStock(vo.getDocumentType(),detail.getProductId(), detail.getStoreId(), detail.getInStoreId(), detail.getUnitId(), detail.getQuantity(),true);
+                iGrCurrentStockService.updateStock(finalVo.getDocumentType(),detail.getProductId(), detail.getStoreId(), detail.getInStoreId(), detail.getUnitId(), detail.getQuantity(),true);
             });
         }
         //单据付款详情
         vo.setId(grDocumentEntity.getId());
-        iGrDocumentSettleDetailService.saveOrUpdateList(document.makeSettleDetail(),grDocumentEntity.getId());
+        iGrDocumentSettleDetailService.saveOrUpdateList(vo.getDocumentSettleDetailList(), grDocumentEntity.getId());
         //账户收款/扣款
-        iGrDocumentAccountDetailService.saveOrUpdateList(document.makeAccountDetail(),grDocumentEntity.getId());
-        //预收款/预付款
-        BigDecimal totalAmount = vo.getDocumentAccountDetailList().stream()
-                .map(accountDetail -> accountDetail.getAmount())
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        iGrContactunitsService.updateAdvance(vo.getContactunitsId(), totalAmount, vo.getDocumentType());
+        iGrDocumentAccountDetailService.saveOrUpdateList(vo.getDocumentAccountDetailList(), grDocumentEntity.getId());
+        //预付款、预收款
+        iGrContactunitsService.updateAdvanceIn(vo.getContactunitsId(), vo.getAdvanceAmount(), vo.getDocumentType());
+        iGrContactunitsService.updateAdvanceIOut(vo.getContactunitsId(), vo.getAdvanceAmount(), vo.getDocumentType());
     }
 
     private void returnStock(Long id,boolean isNeedStock){
@@ -170,10 +170,12 @@ public class GrDocumentServiceImpl extends BaseServiceImpl<GrDocumentMapper, GrD
     private void returnAdvance(Long id, Long contactunitsId, String documentType){
         List<GrDocumentAccountDetailVO> accountDetailList = iGrDocumentAccountDetailService.getlistByDocumentId(id);
         BigDecimal totalAmount = accountDetailList.stream()
+                .filter(detail -> "2".equals(detail.getAccountType()))
                 .map(accountDetail -> accountDetail.getAmount())
                 .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        iGrContactunitsService.returnAdvance(contactunitsId, totalAmount, documentType);
+        iGrContactunitsService.returnAdvanceIn(contactunitsId, totalAmount, documentType);
+        iGrContactunitsService.returnAdvanceIOut(contactunitsId, totalAmount, documentType);
     }
 
     @Override
@@ -182,8 +184,10 @@ public class GrDocumentServiceImpl extends BaseServiceImpl<GrDocumentMapper, GrD
         for(Long id : idList){
             //回退库存
             GrDocumentEntity entity = getById(id);
-            Document document = executeFactory.createDocument(GrDocumentConvert.INSTANCE.convert(entity));
-            returnStock(id,document.isNeedStock());
+            Document document = ExecuteFactory.getDocument(GrDocumentConvert.INSTANCE.convert(entity));
+            returnStock(id,document.getDocumentConfig().getIsNeedStock());
+            //回退预付款、预收款
+            returnAdvance(id,document.getDocumentConfig().getDocumentVO().getContactunitsId(),document.getDocumentConfig().getDocumentVO().getDocumentType());
             //删除详情
             iGrDocumentDetailService.deleteByDocumentId(id);
             iGrDocumentSettleDetailService.deleteByDocumentId(id);

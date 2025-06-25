@@ -1,46 +1,51 @@
 package net.grape.order.service.impl.documentHandler;
 
-import net.grape.order.vo.GrDocumentAccountDetailVO;
-import net.grape.order.vo.GrDocumentDetailVO;
-import net.grape.order.vo.GrDocumentSettleDetailVO;
 import net.grape.order.vo.GrDocumentVO;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
+/**
+ * 21：调拨单  22：其他入库单  23：其他出库单
+ */
 public class AllotDocument implements Document{
 
-    private final GrDocumentVO documentVO;
+    private final DocumentConfig documentConfig;
 
     public AllotDocument(GrDocumentVO documentVO){
-        this.documentVO = documentVO;
+        this.documentConfig = new DocumentConfig();
+        this.makeDocumentDetail(documentVO);
+        this.makeSettleDetail(documentVO);
+        this.makeAccountDetail(documentVO);
+        this.documentConfig.setDocumentVO(documentVO);
+        stock();
+        isNeedStock();
     }
 
     @Override
-    public List<GrDocumentDetailVO> makeDocumentDetail() {
-        return documentVO.getDocumentDetailList();
+    public GrDocumentVO makeDocumentDetail(GrDocumentVO documentVO) {
+        return documentVO;
     }
 
     @Override
-    public List<GrDocumentSettleDetailVO> makeSettleDetail() {
-
-        return null;
+    public GrDocumentVO makeSettleDetail(GrDocumentVO documentVO) {
+        return documentVO;
     }
 
     @Override
-    public List<GrDocumentAccountDetailVO> makeAccountDetail() {
-        return null;
+    public GrDocumentVO makeAccountDetail(GrDocumentVO documentVO) {
+        return documentVO;
     }
 
     @Override
-    public Long stock() {
-        return 0L;
+    public void stock() {
+        documentConfig.setStock(0L);
     }
 
     @Override
-    public Boolean isNeedStock() {
-        return true;
+    public void isNeedStock() {
+        documentConfig.setIsNeedStock(true);
+    }
+
+    @Override
+    public DocumentConfig getDocumentConfig() {
+        return documentConfig;
     }
 }

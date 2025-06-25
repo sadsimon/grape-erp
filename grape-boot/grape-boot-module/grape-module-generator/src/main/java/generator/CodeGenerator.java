@@ -12,15 +12,15 @@ public class CodeGenerator {
     public static void main(String[] args) {
 
         //已生成过的，重新执行只覆盖entity实体类;手动删除可再次生成
-        String table = "gr_product";
+        String table = "gr_document_account_detail";
 
         //项目地址
         String dir = "E:/workspace/grape-erp/";
 
         //模块名称
-        //String module = "order";
+        String module = "order";
         //String module = "stock";
-        String module = "product";
+        //String module = "product";
         //String module = "system";
 
         //输出地址

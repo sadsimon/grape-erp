@@ -10,21 +10,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * 13：销售单
+ */
 public class SaleDocument implements Document{
 
-    private final GrDocumentVO documentVO;
+    private final DocumentConfig documentConfig;
 
     public SaleDocument(GrDocumentVO documentVO){
-        this.documentVO = documentVO;
+        this.documentConfig = new DocumentConfig();
+        this.makeDocumentDetail(documentVO);
+        this.makeSettleDetail(documentVO);
+        this.makeAccountDetail(documentVO);
+        this.documentConfig.setDocumentVO(documentVO);
+        stock();
+        isNeedStock();
     }
 
     @Override
-    public List<GrDocumentDetailVO> makeDocumentDetail() {
-        return documentVO.getDocumentDetailList();
+    public GrDocumentVO makeDocumentDetail(GrDocumentVO documentVO) {
+        return documentVO;
     }
 
     @Override
-    public List<GrDocumentSettleDetailVO> makeSettleDetail() {
+    public GrDocumentVO makeSettleDetail(GrDocumentVO documentVO) {
         GrDocumentSettleDetailVO settleDetailVO = documentVO.getDocumentSettleDetailList().get(0);
         settleDetailVO.setDocumentId(documentVO.getId());
         settleDetailVO.setDocumentCode(documentVO.getDocumentCode());
@@ -33,22 +42,39 @@ public class SaleDocument implements Document{
         settleDetailVO.setAmountType(documentVO.getAmountType());
         List<GrDocumentSettleDetailVO> settleDetailVOs = new ArrayList<GrDocumentSettleDetailVO>();
         settleDetailVOs.add(settleDetailVO);
-        return settleDetailVOs;
+        documentVO.setDocumentSettleDetailList(settleDetailVOs);
+        return documentVO;
     }
 
     @Override
-    public List<GrDocumentAccountDetailVO> makeAccountDetail() {
-        documentVO.getDocumentAccountDetailList().stream().forEach(accountDetail ->{accountDetail.setAmountType(documentVO.getAmountType());});
-        return documentVO.getDocumentAccountDetailList();
+    public GrDocumentVO makeAccountDetail(GrDocumentVO documentVO) {
+        documentVO.getDocumentAccountDetailList().stream().forEach(accountDetail ->{
+            accountDetail.setAmountType(documentVO.getAmountType());
+            accountDetail.setAccountType("1");});
+        //预收款
+        if (documentVO.getAdvanceAmount() != null && documentVO.getAdvanceAmount().compareTo(BigDecimal.ZERO) != 0) {
+            GrDocumentAccountDetailVO grDocumentAccountDetailVO = new GrDocumentAccountDetailVO();
+            grDocumentAccountDetailVO.setDocumentId(documentVO.getId());
+            grDocumentAccountDetailVO.setAmountType(documentVO.getAmountType());
+            grDocumentAccountDetailVO.setAccountType("2");
+            grDocumentAccountDetailVO.setAmount(documentVO.getAdvanceAmount());
+            documentVO.getDocumentAccountDetailList().add(grDocumentAccountDetailVO);
+        }
+        return documentVO;
     }
 
     @Override
-    public Long stock() {
-        return 0L;
+    public void stock() {
+        documentConfig.setStock(0L);
     }
 
     @Override
-    public Boolean isNeedStock() {
-        return true;
+    public void isNeedStock() {
+        documentConfig.setIsNeedStock(true);
+    }
+
+    @Override
+    public DocumentConfig getDocumentConfig() {
+        return documentConfig;
     }
 }

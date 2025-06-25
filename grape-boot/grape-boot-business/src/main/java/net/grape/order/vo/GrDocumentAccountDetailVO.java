@@ -22,18 +22,6 @@ public class GrDocumentAccountDetailVO {
     private Long documentId;
 
     /**
-     * 关联财务单据id
-     */
-    @Schema(description = "关联财务单据id")
-    private Long documentSettleId;
-
-    /**
-     * 财务单据编号
-     */
-    @Schema(description = "财务单据编号")
-    private String settleDocumentCode;
-
-    /**
      * 账户id
      */
     @Schema(description = "账户id")
@@ -56,6 +44,12 @@ public class GrDocumentAccountDetailVO {
      */
     @Schema(description = "类型  1：收入; 2:支出")
     private String amountType;
+
+    /**
+     * 类型  1：普通账户; 2:预付/预收账户
+     */
+    @Schema(description = "类型  1：普通账户; 2:预付/预收账户")
+    private String accountType;
 
     /**
      * 备注

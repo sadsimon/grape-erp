@@ -131,7 +131,7 @@ public class GrDocumentVO  implements Serializable {
      * 预付款金额
      */
     @Schema(description = "预付款金额")
-    private BigDecimal advancePaymentAmount;
+    private BigDecimal advanceAmount;
 
     /**
      * 备注
@@ -153,4 +153,5 @@ public class GrDocumentVO  implements Serializable {
 
     @Schema(description = "支付单据列表")
     private List<GrDocumentSettleDetailVO> documentSettleDetailList;
+
 }

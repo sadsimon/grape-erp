@@ -47,6 +47,7 @@ public class GrCurrentStockServiceImpl extends BaseServiceImpl<GrCurrentStockMap
     @Transactional(rollbackFor = Exception.class)
     public void updateStock(String documentType, Long productId, Long storeId, Long inStoreId, Long unitId, Long quantity, boolean isNew) {
         if(DocumentEnum.DOCUMENT_TYPE_21.getValue().equals(documentType)){
+            //调拨单
             //多单位换算
             Integer capacity = iGrUnitService.getById(unitId).getCapacity();
             quantity = (capacity == null ? 1 : capacity) * quantity;

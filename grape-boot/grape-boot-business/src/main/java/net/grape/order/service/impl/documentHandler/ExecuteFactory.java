@@ -1,36 +1,41 @@
 package net.grape.order.service.impl.documentHandler;
 
 import net.grape.order.vo.GrDocumentVO;
-import org.springframework.stereotype.Component;
 
-@Component
 public class ExecuteFactory {
 
-    public Document createDocument(GrDocumentVO documentVO) {
+    private static Document document;
+
+    private static void createDocument(GrDocumentVO documentVO) {
         switch (documentVO.getDocumentType()) {
-            case "02":
-                return new PurchaseOrderDocument(documentVO);
-            case "03":
-                return new PurchaseReturnDocument(documentVO);
-            case "13":
-                return new SaleDocument(documentVO);
-            case "14":
-                return new SaleReturnDocument(documentVO);
-            case "32":
-            case "34":
-                return new PaymentDocument(documentVO);
-            case "36":
-            case "37":
-                return new IncomeExpendDocument(documentVO);
-            case "21":
-            case "22":
-            case "23":
-                return new AllotDocument(documentVO);
-            case "38":
-            case "39":
-                return new RePaymentCocument(documentVO);
-            default:
+            case "02" ->
+                document = new PurchaseOrderDocument(documentVO);
+            case "03" ->
+                document = new PurchaseReturnDocument(documentVO);
+            case "13" ->
+                document = new SaleDocument(documentVO);
+            case "14" ->
+                document = new SaleReturnDocument(documentVO);
+            case "32",
+                 "34" ->
+                document = new PaymentDocument(documentVO);
+            case "36",
+                 "37" ->
+                document = new IncomeExpendDocument(documentVO);
+            case "21",
+                 "22",
+                 "23" ->
+                document = new AllotDocument(documentVO);
+            case "38",
+                 "39" ->
+                document = new RePaymentCocument(documentVO);
+            default ->
                 throw new IllegalArgumentException("Unknown document type: " + documentVO.getDocumentType());
         }
+    }
+
+    public static Document getDocument(GrDocumentVO documentVO){
+        createDocument(documentVO);
+        return document;
     }
 }

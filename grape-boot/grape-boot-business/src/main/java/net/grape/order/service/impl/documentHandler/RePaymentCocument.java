@@ -1,43 +1,62 @@
 package net.grape.order.service.impl.documentHandler;
 
-import net.grape.order.vo.GrDocumentAccountDetailVO;
-import net.grape.order.vo.GrDocumentDetailVO;
-import net.grape.order.vo.GrDocumentSettleDetailVO;
 import net.grape.order.vo.GrDocumentVO;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.Objects;
 
+/**
+ * 38：预付款单 39：预收款单
+ */
 public class RePaymentCocument implements Document{
 
-    private final GrDocumentVO documentVO;
+    private final DocumentConfig documentConfig;
 
     public RePaymentCocument(GrDocumentVO documentVO) {
-        this.documentVO = documentVO;
+        BigDecimal advanceAmount = documentVO.getDocumentAccountDetailList().stream()
+                .map(accountDetail -> accountDetail.getAmount())
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        documentVO.setAdvanceAmount(advanceAmount);
+        this.documentConfig = new DocumentConfig();
+        this.makeDocumentDetail(documentVO);
+        this.makeSettleDetail(documentVO);
+        this.makeAccountDetail(documentVO);
+        this.documentConfig.setDocumentVO(documentVO);
+        stock();
+        isNeedStock();
     }
 
     @Override
-    public List<GrDocumentDetailVO> makeDocumentDetail() {
-        return documentVO.getDocumentDetailList();
+    public GrDocumentVO makeDocumentDetail(GrDocumentVO documentVO) {
+        return documentVO;
     }
 
     @Override
-    public List<GrDocumentSettleDetailVO> makeSettleDetail() {
+    public GrDocumentVO makeSettleDetail(GrDocumentVO documentVO) {
         return null;
     }
 
     @Override
-    public List<GrDocumentAccountDetailVO> makeAccountDetail() {
-        documentVO.getDocumentAccountDetailList().stream().forEach(accountDetail ->{accountDetail.setAmountType(documentVO.getAmountType());});
-        return documentVO.getDocumentAccountDetailList();
+    public GrDocumentVO makeAccountDetail(GrDocumentVO documentVO) {
+        documentVO.getDocumentAccountDetailList().stream().forEach(accountDetail ->{
+            accountDetail.setAmountType(documentVO.getAmountType());
+            accountDetail.setAccountType("2");});
+        return documentVO;
     }
 
     @Override
-    public Long stock() {
-        return 0L;
+    public void stock() {
+        documentConfig.setStock(0L);
     }
 
     @Override
-    public Boolean isNeedStock() {
-        return false;
+    public void isNeedStock() {
+        documentConfig.setIsNeedStock(false);
+    }
+
+    @Override
+    public DocumentConfig getDocumentConfig() {
+        return documentConfig;
     }
 }

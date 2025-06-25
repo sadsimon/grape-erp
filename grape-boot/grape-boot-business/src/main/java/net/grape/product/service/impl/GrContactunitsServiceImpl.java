@@ -152,32 +152,83 @@ public class GrContactunitsServiceImpl extends BaseServiceImpl<GrContactunitsMap
     }
 
     @Override
-    public void updateAdvance(Long contactunitsId, BigDecimal amount, String documentType) {
-        if ("38".equals(documentType)) {
-            GrContactunitsEntity grContactunitsEntity = getById(contactunitsId);
-            //单据预付款，就是供应商的预收款
-            grContactunitsEntity.setAdvanceIn(NumberUtil.add(grContactunitsEntity.getAdvanceIn(),amount));
-            updateById(grContactunitsEntity);
-        }else if("39".equals(documentType)){
-            GrContactunitsEntity grContactunitsEntity = getById(contactunitsId);
-            //单据预收款款，就是供应商的预付款
-            grContactunitsEntity.setAdvanceOut(NumberUtil.add(grContactunitsEntity.getAdvanceOut(),amount));
-            updateById(grContactunitsEntity);
+    public void updateAdvanceIn(Long contactunitsId, BigDecimal amount, String documentType) {
+        if ("03".equals(documentType) || "38".equals(documentType)) {
+            addAdvanceIn(contactunitsId,amount);
+        }else if("02".equals(documentType)){
+            subAdvanceIn(contactunitsId,amount);
         }
     }
 
     @Override
-    public void returnAdvance(Long contactunitsId, BigDecimal amount, String documentType) {
-        if ("38".equals(documentType)) {
-            GrContactunitsEntity grContactunitsEntity = getById(contactunitsId);
-            //单据预付款，就是供应商的预收款
-            grContactunitsEntity.setAdvanceIn(NumberUtil.sub(grContactunitsEntity.getAdvanceIn(),amount));
-            updateById(grContactunitsEntity);
-        } else if ("39".equals(documentType)) {
-            GrContactunitsEntity grContactunitsEntity = getById(contactunitsId);
-            //单据预收款款，就是供应商的预付款
-            grContactunitsEntity.setAdvanceOut(NumberUtil.sub(grContactunitsEntity.getAdvanceOut(),amount));
-            updateById(grContactunitsEntity);
+    public void returnAdvanceIn(Long contactunitsId, BigDecimal amount, String documentType) {
+        if ("03".equals(documentType) || "38".equals(documentType)) {
+            subAdvanceIn(contactunitsId,amount);
+        }else if("02".equals(documentType)){
+            addAdvanceIn(contactunitsId,amount);
         }
     }
+
+    @Override
+    public void updateAdvanceIOut(Long contactunitsId, BigDecimal amount, String documentType) {
+        if("14".equals(documentType) || "39".equals(documentType)){
+            addAdvanceOut(contactunitsId, amount);
+        }else if("13".equals(documentType)){
+            subAdvanceOut(contactunitsId, amount);
+        }
+    }
+
+    @Override
+    public void returnAdvanceIOut(Long contactunitsId, BigDecimal amount, String documentType) {
+        if("14".equals(documentType) || "39".equals(documentType)){
+            subAdvanceOut(contactunitsId, amount);
+        }else if("13".equals(documentType)){
+            addAdvanceOut(contactunitsId, amount);
+        }
+    }
+
+    /**
+     * 添加预收款
+     * @param contactunitsId
+     * @param amount
+     */
+    private void addAdvanceIn(Long contactunitsId, BigDecimal amount){
+        GrContactunitsEntity grContactunitsEntity = getById(contactunitsId);
+        grContactunitsEntity.setAdvanceIn(NumberUtil.add(grContactunitsEntity.getAdvanceIn(),amount));
+        updateById(grContactunitsEntity);
+    }
+
+    /**
+     * 扣减预收款
+     * @param contactunitsId
+     * @param amount
+     */
+    private void subAdvanceIn(Long contactunitsId, BigDecimal amount){
+        GrContactunitsEntity grContactunitsEntity = getById(contactunitsId);
+        grContactunitsEntity.setAdvanceIn(NumberUtil.sub(grContactunitsEntity.getAdvanceIn(),amount));
+        updateById(grContactunitsEntity);
+    }
+
+    /**
+     * 添加预付款
+     * @param contactunitsId
+     * @param amount
+     */
+    private void addAdvanceOut(Long contactunitsId, BigDecimal amount){
+        GrContactunitsEntity grContactunitsEntity = getById(contactunitsId);
+        grContactunitsEntity.setAdvanceOut(NumberUtil.add(grContactunitsEntity.getAdvanceOut(),amount));
+        updateById(grContactunitsEntity);
+    }
+
+    /**
+     * 扣减预付款
+     * @param contactunitsId
+     * @param amount
+     */
+    private void subAdvanceOut(Long contactunitsId, BigDecimal amount){
+        GrContactunitsEntity grContactunitsEntity = getById(contactunitsId);
+        grContactunitsEntity.setAdvanceOut(NumberUtil.sub(grContactunitsEntity.getAdvanceOut(),amount));
+        updateById(grContactunitsEntity);
+    }
+
 }

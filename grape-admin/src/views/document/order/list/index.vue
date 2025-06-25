@@ -5,7 +5,7 @@
 					@keydown.enter="checkByBarcode">
 					<template #prepend>条码</template>
 				</el-input>
-				<GrField />
+				<!-- <GrField /> -->
 			</el-space>
 		</el-space>
 			

@@ -42,10 +42,9 @@
 								<el-col :span="24" :lg="24" :md="24" :sm="24">
 									<el-form-item prop="number" label="预付款">
 										<el-input
-										v-model="dataForm.advanceDetail.amount"
+										v-model="dataForm.advanceAmount"
 										      style="max-width: 300px"
 										      placeholder="金额"
-											  :key="dataForm.advanceDetail.key"
 											  :disabled="isfinish"
 										    >
 											  <template #append>
@@ -119,7 +118,7 @@
 	import { useDocumentSubmitApi, useGetDocumentCodeApi, useGetHistoryPayAmountApi, useDocumentApi } from '@/api/product/order'
 	import { DocumentDetail } from '@/views/document/index'
 	import { useWindowResize } from '@/views/document/useWindowResize'
-	import { SettleDetailInt, DocumentAccountDetailInt, DocumentAdvanceDetailInt } from '@/views/document/settlement/settlement'
+	import { SettleDetailInt, DocumentAccountDetailInt } from '@/views/document/settlement/settlement'
 	import { Delete } from '@element-plus/icons-vue'
 	import { getCurrentDate } from '@/utils/tool'
 	import { cloneDeep } from 'lodash-es'
@@ -150,7 +149,7 @@
 		documentSettleDetailList : SettleDetailInt[]
 		documentAccountDetailList : DocumentAccountDetailInt[]
 		documentAccountDetailListDelete : number[]
-		advanceDetail : DocumentAdvanceDetailInt
+		advanceAmount : number | null
 	}
 	
 	const initialDataForm = {
@@ -164,6 +163,7 @@
 		documentStatus: '2',
 		documentType: documentType.value,
 		amountType: amountType.value,
+		advanceAmount: null,
 		documentDetailList: [{
 			'id': null,
 			'productId': null,
@@ -176,6 +176,7 @@
 			'unitId': '',
 			'unitPrice': null,
 			'amount': null,
+			'finalAmount': null,
 			'expectPurchasePrice': null,
 			
 		}],
@@ -199,14 +200,7 @@
 			amountType: amountType.value,
 			remark: ''
 		}],
-		documentAccountDetailListDelete: [],
-		advanceDetail: {
-			key: null,
-			contactunitsId: 0,
-			amount: 0,
-			amountType: amountType.value,
-			remark: ''
-		}
+		documentAccountDetailListDelete: []
 	}
 	
 	const dataForm = ref<DataForm>(initialDataForm)
@@ -240,14 +234,14 @@
 	}
 	
 	const contactunitBalance = ref(0)
-	//预付款金额
+	//预付款余额
 	const balance = ref(0)
 	const updateBalance = ((data:any)=>{
 		contactunitBalance.value = data[0].advanceIn
 	})
 	
 	watch(
-	  ()=>dataForm.value.advanceDetail.amount,
+	  ()=>dataForm.value.advanceAmount,
 	  (newAmount) => {
 	    if (newAmount) {
 	      balance.value = calcChain(contactunitBalance.value).sub(newAmount).toNumber()
@@ -259,7 +253,7 @@
 	  ()=>contactunitBalance.value,
 	  (newBalance) => {
 	    if (newBalance) {
-	      balance.value = calcChain(newBalance).sub(dataForm.value.advanceDetail.amount).toNumber()
+	      balance.value = calcChain(newBalance).sub(dataForm.value.advanceAmount).toNumber()
 	    }
 	  }
 	)
@@ -327,7 +321,7 @@
 			const amount = Number(item.amount) || 0
 			return sum.plus(amount)
 		}, new Big(0)))
-		.sub(dataForm.value.advanceDetail.amount).toNumber())
+		.sub(dataForm.value.advanceAmount).toNumber())
 	})
 	
 	//此前应付款
@@ -362,6 +356,14 @@
 				ElMessage.error({
 					message: '入库商品不能为空'
 				})
+				return
+			}
+			
+			if (balance.value < 0){
+				ElMessage.error({
+					message: '预付款金额不能超过余额'
+				})
+				return
 			}
 			dataForm.value.finalAmount = finalAmount.value
 			useDocumentSubmitApi(dataForm.value).then(() => {

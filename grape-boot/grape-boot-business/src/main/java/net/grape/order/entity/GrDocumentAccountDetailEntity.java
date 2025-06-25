@@ -13,7 +13,7 @@ import lombok.Setter;
  * </p>
  *
  * @author 疯狂的老码
- * @since 2025-05-27
+ * @since 2025-06-25
  */
 @Getter
 @Setter
@@ -26,16 +26,6 @@ public class GrDocumentAccountDetailEntity extends BaseEntity {
      * 关联单据id
      */
     private Long documentId;
-
-    /**
-     * 关联财务单据id
-     */
-    private Long documentSettleId;
-
-    /**
-     * 财务单据编号
-     */
-    private String settleDocumentCode;
 
     /**
      * 账户id
@@ -51,6 +41,11 @@ public class GrDocumentAccountDetailEntity extends BaseEntity {
      * 类型  1：收入; 2:支出
      */
     private String amountType;
+
+    /**
+     * 类型  1：普通账户; 2:预付/预收账户
+     */
+    private String accountType;
 
     /**
      * 备注
