@@ -1,6 +1,7 @@
 package net.grape.order.service.impl.documentHandler;
 
 import net.grape.order.vo.GrDocumentAccountDetailVO;
+import net.grape.order.vo.GrDocumentDetailVO;
 import net.grape.order.vo.GrDocumentSettleDetailVO;
 import net.grape.order.vo.GrDocumentVO;
 
@@ -28,6 +29,10 @@ public class IncomeExpendDocument implements Document{
 
     @Override
     public GrDocumentVO makeDocumentDetail(GrDocumentVO documentVO) {
+        //过滤掉为空的数据
+        List<GrDocumentDetailVO> filteredList = documentVO.getDocumentDetailList().stream().filter(
+                detail -> detail.getProductId() != null && detail.getProjectId() != null).toList() ;
+        documentVO.setDocumentDetailList(filteredList);
         return documentVO;
     }
 

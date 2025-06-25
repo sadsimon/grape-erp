@@ -1,6 +1,9 @@
 package net.grape.order.service.impl.documentHandler;
 
+import net.grape.order.vo.GrDocumentDetailVO;
 import net.grape.order.vo.GrDocumentVO;
+
+import java.util.List;
 
 /**
  * 32：付款单 34：收款单
@@ -21,6 +24,10 @@ public class PaymentDocument implements Document{
 
     @Override
     public GrDocumentVO makeDocumentDetail(GrDocumentVO documentVO) {
+        //过滤掉为空的数据
+        List<GrDocumentDetailVO> filteredList = documentVO.getDocumentDetailList().stream().filter(
+                detail -> detail.getProductId() != null && detail.getProjectId() != null).toList() ;
+        documentVO.setDocumentDetailList(filteredList);
         return documentVO;
     }
 
