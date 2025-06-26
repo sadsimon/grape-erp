@@ -20,13 +20,12 @@
 						<GrContactunitsInput width="250px" @select="updateBalance" :disabled="isfinish" :type="'0'" :title="'供货单位'" v-model="dataForm.contactunitsId"></GrContactunitsInput>
 					</el-form-item>
 					<el-form-item prop="userId" label="经手人">
-						<MaUserInput :disabled="isfinish" v-model="dataForm.userId"></MaUserInput>
+						<MaUserInput width="250px" :disabled="isfinish" v-model="dataForm.userId"></MaUserInput>
 					</el-form-item>
 					<el-form-item prop="remark" label="备注">
 						<el-input
 						    v-model="dataForm.remark"
 						    style="width: 540px"
-						    :rows="1"
 						  />
 					</el-form-item>
 				</el-form>
@@ -116,7 +115,7 @@
 	import List from './list/index.vue'
 	import { ElMessage } from 'element-plus/es'
 	import { useDocumentSubmitApi, useGetDocumentCodeApi, useGetHistoryPayAmountApi, useDocumentApi } from '@/api/product/order'
-	import { DocumentDetail } from '@/views/document/index'
+	import { DocumentDetail, getContactunitsAdvanceIn } from '@/views/document/index'
 	import { useWindowResize } from '@/views/document/useWindowResize'
 	import { SettleDetailInt, DocumentAccountDetailInt } from '@/views/document/settlement/settlement'
 	import { Delete } from '@element-plus/icons-vue'
@@ -236,16 +235,16 @@
 	const contactunitBalance = ref(0)
 	//预付款余额
 	const balance = ref(0)
-	const updateBalance = ((data:any)=>{
-		contactunitBalance.value = data[0].advanceIn
-	})
+	const updateBalance = async ()=>{
+		if(dataForm.value.contactunitsId){
+			contactunitBalance.value = await getContactunitsAdvanceIn(dataForm.value.contactunitsId)
+		}
+	}
 	
 	watch(
 	  ()=>dataForm.value.advanceAmount,
 	  (newAmount) => {
-	    if (newAmount) {
-	      balance.value = calcChain(contactunitBalance.value).sub(newAmount).toNumber()
-	    }
+	    balance.value = calcChain(contactunitBalance.value).sub(newAmount || 0).toNumber()
 	  }
 	)
 	
@@ -258,9 +257,6 @@
 	  }
 	)
 	
-	
-	const id = ref('');
-	
 	const addNext =() => {
 		init(false)
 	}
@@ -270,6 +266,7 @@
 		dataForm.value.documentTime = getCurrentDate()
 		isfinish.value = false
 		getHistoryPayAmount(dataForm.value.contactunitsId)
+		updateBalance()
 		ElMessage.success({
 			message: '复制成功'
 		})
@@ -287,6 +284,7 @@
 			getDocumentCode()
 			dataForm.value.documentTime = getCurrentDate()
 			historyPayAmount.value = 0
+			balance.value = 0
 		}
 		isfinish.value = false
 	}
@@ -305,11 +303,11 @@
 
 	const activeName = ref('payment')
 	
-	//应收款总金额
+	//应付款总金额
 	const finalAmount = computed(() =>{
 		return dataForm.value.documentDetailList.reduce((sum, item) => {
 			// 将 amount 转换为数字，如果是字符串
-			return sum.plus(Number(item.finalAmount) || 0)
+			return sum.plus(item.finalAmount || 0)
 		}, new Big(0))
 		
 	})
@@ -318,7 +316,7 @@
 	const shouldAmount = computed(() => {
 		return (calcChain(finalAmount.value)
 		.sub(dataForm.value.documentAccountDetailList.reduce((sum, item) => {
-			const amount = Number(item.amount) || 0
+			const amount = item.amount || 0
 			return sum.plus(amount)
 		}, new Big(0)))
 		.sub(dataForm.value.advanceAmount).toNumber())
@@ -365,6 +363,7 @@
 				})
 				return
 			}
+			
 			dataForm.value.finalAmount = finalAmount.value
 			useDocumentSubmitApi(dataForm.value).then(() => {
 				ElMessage.success({
@@ -381,6 +380,7 @@
 		documentTime: [{ required: true, message: '必填项不能为空', trigger: 'change' }],
 	})
 	
+	const id = ref('')
 	watchEffect(()=>{
 		if(typeof route.query.id === 'string'){
 			id.value = route.query.id

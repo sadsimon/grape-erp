@@ -17,17 +17,15 @@
 						      />
 					</el-form-item>
 					<el-form-item prop="contactunitsId" label="退货单位">
-						<GrContactunitsInput width="250px" :disabled="isfinish" :type="'0'" :title="'退货单位'" v-model="dataForm.contactunitsId"></GrContactunitsInput>
+						<GrContactunitsInput width="250px" @select="updateBalance" :disabled="isfinish" :type="'0'" :title="'退货单位'" v-model="dataForm.contactunitsId"></GrContactunitsInput>
 					</el-form-item>
 					<el-form-item prop="userId" label="经手人">
-						<MaUserInput :disabled="isfinish" v-model="dataForm.userId"></MaUserInput>
+						<MaUserInput width="250px" :disabled="isfinish" v-model="dataForm.userId"></MaUserInput>
 					</el-form-item>
 					<el-form-item prop="remark" label="备注">
 						<el-input
 						    v-model="dataForm.remark"
 						    style="width: 540px"
-						    :rows="1"
-						    type="textarea"
 						  />
 					</el-form-item>
 				</el-form>
@@ -40,6 +38,20 @@
 					<el-tab-pane label="表尾信息" name="payment">
 						<el-form ref="dataFormRef" style="margin-top: 15px;" :model="dataForm" :rules="dataRules" label-width="100px">
 							<el-row :gutter="5">
+								<el-col :span="24" :lg="24" :md="24" :sm="24">
+									<el-form-item prop="number" label="退预付款">
+										<el-input
+										v-model="dataForm.advanceAmount"
+										      style="max-width: 300px"
+										      placeholder="金额"
+											  :disabled="isfinish"
+										    >
+											  <template #append>
+											  	  余额&nbsp;<span style="color: red;">{{ balance }}</span>
+											  </template>
+										    </el-input>
+									</el-form-item>
+								</el-col>
 								<el-col v-for="(accountDetail) in dataForm.documentAccountDetailList" :span="24" :lg="8" :md="8" :sm="12">
 									<el-form-item prop="number" label="收款信息">
 										<el-input
@@ -50,7 +62,7 @@
 											  :disabled="isfinish"
 										    >
 										      <template #prepend>
-													<GrSettlementAccountInput :disabled="isfinish" v-model="accountDetail.accountId" width="150px" placeholder="类型"/>
+													<GrSettlementAccountInput :disabled="isfinish" v-model="accountDetail.accountId" width="150px" placeholder="请选择账户"/>
 										      </template>
 											  <template #append>
 												  <el-button :icon="Delete" :disabled="isfinish" @click.prevent="removeDomain(accountDetail)" />
@@ -102,13 +114,15 @@
 	import List from './list/index.vue'
 	import { ElMessage } from 'element-plus/es'
 	import { useDocumentSubmitApi, useGetDocumentCodeApi, useGetHistoryPayAmountApi,useDocumentApi } from '@/api/product/order'
-	import { DocumentDetail } from '@/views/document/index'
+	import { DocumentDetail, getContactunitsAdvanceIn } from '@/views/document/index'
 	import { useWindowResize } from '@/views/document/useWindowResize'
 	import { SettleDetailInt, DocumentAccountDetailInt } from '@/views/document/settlement/settlement'
 	import { Delete } from '@element-plus/icons-vue'
 	import { getCurrentDate } from '@/utils/tool'
 	import { cloneDeep } from 'lodash-es'
 	import { closeTab } from '@/utils/tabs'
+	import { calcChain } from '@/utils/accuracyCalc'
+	import Big from 'big.js'
 
 	const isfinish = ref(false)
 
@@ -132,6 +146,7 @@
 		documentSettleDetailList : SettleDetailInt[]
 		documentAccountDetailList : DocumentAccountDetailInt[]
 		documentAccountDetailListDelete : number[]
+		advanceAmount : number | null
 	}
 	
 	const initialDataForm = {
@@ -144,6 +159,7 @@
 		documentStatus: '2',
 		documentType: documentType.value,
 		amountType: amountType.value,
+		advanceAmount: null,
 		documentDetailList: [{
 			'id': null,
 			'productId': null,
@@ -212,6 +228,31 @@
 		
 	}
 
+	const contactunitBalance = ref(0)
+	//预付款余额
+	const balance = ref(0)
+	const updateBalance = async ()=>{
+		if(dataForm.value.contactunitsId){
+			contactunitBalance.value = await getContactunitsAdvanceIn(dataForm.value.contactunitsId)
+		}
+	}
+	
+	watch(
+	  ()=>dataForm.value.advanceAmount,
+	  (newAmount) => {
+	    balance.value = calcChain(contactunitBalance.value).add(newAmount || 0).toNumber()
+	  }
+	)
+	
+	watch(
+	  ()=>contactunitBalance.value,
+	  (newBalance) => {
+	    if (newBalance) {
+	      balance.value = calcChain(newBalance).add(dataForm.value.advanceAmount).toNumber()
+	    }
+	  }
+	)
+	
 	const addNext =() => {
 		init(false)
 	}
@@ -221,6 +262,7 @@
 		dataForm.value.documentTime = getCurrentDate()
 		isfinish.value = false
 		getHistoryPayAmount(dataForm.value.contactunitsId)
+		updateBalance()
 		ElMessage.success({
 			message: '复制成功'
 		})
@@ -240,6 +282,7 @@
 			getDocumentCode()
 			dataForm.value.documentTime = getCurrentDate()
 			historyPayAmount.value = 0
+			balance.value = 0
 		}
 		isfinish.value = false
 	}
@@ -252,22 +295,20 @@
 
 	const activeName = ref('payment')
 	
-	//收款总金额
+	//应收款总金额
 	const finalAmount = computed(() =>{
 		return dataForm.value.documentDetailList.reduce((sum, item) => {
-			// 将 amount 转换为数字，如果是字符串
-			const finalAmount = Number(item.finalAmount) || 0
-			return sum + finalAmount
-		}, 0)
+			return sum.plus(item.finalAmount || 0)
+		}, new Big(0))
+		
 	})
 	
-	//本单应付款(采购退货单)=-(商品金额-收款金额)
+	//本单应付款(采购退货单)=-(商品金额-收款金额-退的预付款)
 	const shouldAmount = computed(() => {
-		return ((dataForm.value.documentAccountDetailList.reduce((sum, item) => {
-			// 将 amount 转换为数字，如果是字符串
-			const amount = Number(item.amount) || 0
-			return sum + amount
-		}, 0)) - finalAmount.value)
+		return (calcChain(dataForm.value.documentAccountDetailList.reduce((sum, item) => {
+			const amount = item.amount || 0
+			return sum.plus(amount)
+		}, new Big(0))).add(dataForm.value.advanceAmount).sub(finalAmount.value).toNumber() )
 	})
 
 	//此前应付款
@@ -289,7 +330,7 @@
 	
 	//合计应付款
 	const totalAmount = computed(() => {
-		return shouldAmount.value + historyPayAmount.value
+		return calcChain(shouldAmount.value).add(historyPayAmount.value).toFixed()
 	})
 
 	const submitHandle = () => {
@@ -302,7 +343,16 @@
 				ElMessage.error({
 					message: '入库商品不能为空'
 				})
+				return
 			}
+			
+			if (balance.value < 0){
+				ElMessage.error({
+					message: '预付款金额不能超过余额'
+				})
+				return
+			}
+			
 			dataForm.value.finalAmount = finalAmount.value
 			useDocumentSubmitApi(dataForm.value).then(() => {
 				ElMessage.success({

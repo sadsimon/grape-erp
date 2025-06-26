@@ -1,7 +1,7 @@
 <template>
 	<el-select @change="change" v-model="model" :placeholder :disabled :clearable :style="{ width: prop.width }">
 		<el-option v-for="item in dataList" :key="item[props.value]" :label="item[props.label]" :value="item[props.value]"></el-option>
-		<template #footer>
+		<template #footer v-if="$slots.footer">
 			<slot name="footer"></slot>
 		</template>
 	</el-select>

@@ -5,7 +5,7 @@
 					@keydown.enter="checkByBarcode">
 					<template #prepend>条码</template>
 				</el-input>
-				<GrField />
+				<!-- <GrField /> -->
 			</el-space>
 		</el-space>
 			
@@ -60,7 +60,7 @@
 							@input="changeQuantity(scope.$index)"></gr-number-input>
 					</template>
 				</el-table-column>
-				<el-table-column prop="unitPrice" align="center" label="采购价">
+				<el-table-column prop="unitPrice" align="center" label="单价">
 					<template #default="scope">
 						<gr-number-input :disabled="isfinish" v-model="scope.row['unitPrice']"
 							@input="changeUnitPrice(scope.$index)"></gr-number-input>
@@ -108,10 +108,10 @@
 	import { ElMessage } from 'element-plus/es'
 	import { DocumentDetail } from '@/views/document/index'
 	import { cloneDeep } from 'lodash-es'
+	import { calcChain } from '@/utils/accuracyCalc'
 
 	const barcodeQuery = ref()
 	
-
 	interface SelectableTableMethods {
 		addRow : (index : number) => void
 		removeRow : (index : number) => void
@@ -180,6 +180,7 @@
 				row['quantity'] = 1
 				tableData.value.push(row)
 			})
+			tableRef.value?.addRow(index + 1)
 		} else {
 			rows[0]['unitPrice'] = rows[0]['expectPurchasePrice']
 			rows[0]['quantity'] = 1
@@ -204,6 +205,7 @@
 					res.data['quantity'] = 1
 					res.data['unitPrice'] = res.data.expectPurchasePrice
 					tableData.value.push(res.data)
+					tableRef.value?.addRow(tableData.value.length)
 				}
 				computedAmounts(tableData.value)
 				
@@ -255,37 +257,38 @@
 	
 	//通过税价合计计算金额
 	const computedAmountByFinalAmount = (row : DocumentDetail) => {
-		computedTaxAmount(row)
-		if(row['taxAmount'] ){
-			row['amount'] = row['finalAmount']? row['finalAmount'] - row['taxAmount'] : 0
-		}
+		row['amount'] = (row['finalAmount']? 
+		calcChain(row['finalAmount']).div
+		(calcChain(1).add(calcChain(row['taxRate']).div(100).toFixed()).toFixed()).toNumber()
+		: 0)
+		row['taxAmount'] = row['finalAmount']? calcChain(row['finalAmount']).sub(row['amount']).toNumber() : 0
 	}
 	
 	//单价（采购价）
 	const computedUnitPrice = (row : DocumentDetail) => {
 		if(row['quantity']){
-			row['unitPrice'] = Number((row['amount']?row['amount'] / row['quantity'] : 0).toFixed(2))
+			row['unitPrice'] = (row['amount'] ? calcChain(row['amount']).div(row['quantity']).toNumber() : 0)
 		}
 	}
 	
 	//金额
 	const computedAmount = (row : DocumentDetail) => {
 		if (row['unitPrice']) {
-			row['amount'] = row['quantity']?row['quantity'] * row['unitPrice'] : 0
+			row['amount'] = row['quantity'] ? calcChain(row['quantity']).mul(row['unitPrice']).toNumber() : 0
 		}
 	}
 	
 	//税额
 	const computedTaxAmount = (row : DocumentDetail) => {
 		if (row['amount']) {
-			row['taxAmount'] = Number((row['taxRate']? (row['taxRate']/100)* row['amount'] : 0).toFixed(2))
+			row['taxAmount'] = (row['taxRate']? (calcChain(row['taxRate']).div(100).mul(row['amount']).toNumber()) : 0)
 		}
 	}
 	
 	//税价合计
 	const computedFinalAmount = (row : DocumentDetail) => {
 		if(row['amount']){
-			row['finalAmount'] = row['taxRate']? row['amount'] * (1+(row['taxRate']/100)) : row['amount']
+			row['finalAmount'] = row['taxRate']? calcChain(row['amount']).mul(calcChain(1).add(calcChain(row['taxRate']).div(100).toFixed()).toFixed()).toNumber() : row['amount']
 		}
 	}
 	

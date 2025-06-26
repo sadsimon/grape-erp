@@ -50,7 +50,7 @@
 											  :disabled="isfinish"
 										    >
 										      <template #prepend>
-													<GrSettlementAccountInput :disabled="isfinish" v-model="accountDetail.accountId" width="150px" placeholder="类型"/>
+													<GrSettlementAccountInput :disabled="isfinish" v-model="accountDetail.accountId" width="150px" placeholder="请选择账户"/>
 										      </template>
 											  <template #append>
 												  <el-button :icon="Delete" :disabled="isfinish" @click.prevent="removeDomain(accountDetail)" />
