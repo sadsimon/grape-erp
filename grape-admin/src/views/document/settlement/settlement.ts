@@ -10,7 +10,7 @@ export interface documentDataInt {
 	finalAmount: number | null
 	pendingAmount: number | null
 	paymentAmount: number | null
-	advancePaymentAmount: number | null
+	advanceAmount: number | null
 	discountAmount: number | null
 	sumAmount: number | null
 }

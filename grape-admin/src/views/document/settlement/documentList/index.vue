@@ -60,9 +60,9 @@
 							@input="changeSumAmount(scope.$index)"></gr-number-input>
 					</template>
 				</el-table-column>
-				<el-table-column fixed="right" class-name="el-table-column-text" prop="advancePaymentAmount" align="center" label="预付款金额">
+				<el-table-column fixed="right" class-name="el-table-column-text" prop="advanceAmount" align="center" label="预付款金额">
 					<template #default="scope">
-						<gr-number-input :disabled="isfinish" v-model="scope.row['advancePaymentAmount']"
+						<gr-number-input :disabled="isfinish" v-model="scope.row['advanceAmount']"
 							@input="changeSumAmount(scope.$index)"></gr-number-input>
 					</template>
 				</el-table-column>
@@ -140,14 +140,14 @@
 	const showSummaries = ref<SummaryConfig[]>([
 		{ prop: 'pendingAmount', decimal: 2 },
 		{ prop: 'paymentAmount', decimal: 2 },
-		{ prop: 'advancePaymentAmount', decimal: 2 },
+		{ prop: 'advanceAmount', decimal: 2 },
 		{ prop: 'discountAmount', decimal: 2 },
 		{ prop: 'sumAmount', decimal: 2 }
 	])
 
 	const fields = ref(['id', 'documentCode', 'documentType', 'documentTime', 
 	'contactunitsName', 'contactunitsCode', 'realName', 'remark', 'finalAmount', 
-	'pendingAmount','paymentAmount','advancePaymentAmount','discountAmount','sumAmount'])
+	'pendingAmount','paymentAmount','advanceAmount','discountAmount','sumAmount'])
 
 	const check = (index : number, rows : documentDataInt[]) => {
 		if (tableData.value.length === index + 1) {
@@ -162,12 +162,12 @@
 	}
 
 	const computedSumAmount = (row : documentDataInt) => {
-		row['sumAmount'] = (row['paymentAmount'] || 0) + (row['advancePaymentAmount'] || 0) + (row['discountAmount'] || 0)
+		row['sumAmount'] = (row['paymentAmount'] || 0) + (row['advanceAmount'] || 0) + (row['discountAmount'] || 0)
 	}
 
 	const changeSumAmount = (index : number) => {
 		tableData.value[index]['sumAmount'] = Number(tableData.value[index]['paymentAmount'])
-		+ Number(tableData.value[index]['advancePaymentAmount']) + Number(tableData.value[index]['discountAmount'])
+		+ Number(tableData.value[index]['advanceAmount']) + Number(tableData.value[index]['discountAmount'])
 	}
 	
 	//计算高度

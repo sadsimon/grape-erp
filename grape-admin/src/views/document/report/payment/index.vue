@@ -1,7 +1,7 @@
 <template>
 	<div class="parent-container">
 		<el-container class="layout-container">
-			<el-card id="customParent" class="layout-query">
+			<el-card id="customParent" class="head layout-query">
 				<el-form ref="queryRef" :inline="true" :model="state.queryForm" @keyup.enter="getDataList">
 					<el-form-item prop="documentCode" label="单据编号">
 						<el-input v-model="state.queryForm.documentCode"></el-input>
@@ -39,7 +39,7 @@
 			<el-card class="main">
 				<el-space>
 					<el-space>
-						<GrButton placeholder="新增单据" :data="addDocumentType" @select="addDocumentUrl($event)" width="120px">
+						<GrButton placeholder="新增单据" :data="addDocumentType" @select="addDocument($event)" width="120px">
 							  <template #prefix>
 									<el-icon><Plus /></el-icon>
 							  </template>
@@ -59,12 +59,12 @@
 					@selection-change="selectionChangeHandle"
 					highlight-current-row
 					@row-click="handleRow"
-					:height="tableHeight"
+					:height="listHeight"
 				>
 					<el-table-column type="selection" fixed="left" header-align="center" align="center" width="50"></el-table-column>
 					<el-table-column label="操作" header-align="center" align="center" width="120">
 						<template #default="scope">
-							<el-button type="primary" link @click="changeHandle(scope.row.documentType,scope.row.id)">修改</el-button>
+							<el-button type="primary" link @click="editDocument(scope.row.documentType,scope.row.id)">修改</el-button>
 							<el-button type="primary" link @click="deleteBatchHandle(scope.row.id)">删除</el-button>
 						</template>
 					</el-table-column>
@@ -112,45 +112,24 @@ import { reactive, ref, onMounted } from 'vue'
 import { IHooksOptions } from '@/hooks/interface'
 import { useRouter } from 'vue-router'
 import { useGetDocumentDetailApi, useGetDocumentAccountDetailApi } from '@/api/product/order'
-import { DocumentDetail,AccountDetail } from '@/views/document/index'
-
+import { DocumentDetail, AccountDetail, getRouterPath } from '@/views/document/index'
+import { useWindowResize } from '@/views/document/useWindowResize'
 
 
 const showPopup = ref(false)
 
 const queryRef = ref()
 
-// 初始化表格高度
-const tableHeight = ref(0)
-const footHeight = ref(0)
-// 更新表格高度的方法
-const updateTableHeight = () => {
-	tableHeight.value = window.innerHeight -(264+footHeight.value)
-}
-const isArrowUpFu = (isArrowUp: number) => {
-	footHeight.value = isArrowUp
-	updateTableHeight()
-}
-// 在组件挂载时初始化高度，并监听窗口大小变化
-onMounted(() => {
-	updateTableHeight() // 初始化高度
-	window.addEventListener('resize', updateTableHeight) // 监听窗口大小变化
-})
-
 const router = useRouter()
 
-// 修改
-const changeHandle = (documentType: string, id: number) => {
-	let path
-	let query = {}
-	if(documentType === '32'){
-		path = '/settlement/payment/index'
-		
-	}else if(documentType === '34'){
-		path = '/settlement/receivePayment/index'
-	}
-	query = { id: id.toString() }
-	router.push({path,query})
+//新增单据
+const addDocument = (data: any) =>{
+	router.push({path: getRouterPath(data.id)})
+}
+// 修改单据
+const editDocument = (documentType: string, id: number) => {
+	router.push({path: getRouterPath(documentType),
+    query: { id: id.toString() } })
 }
 
 const state: IHooksOptions = reactive({
@@ -199,18 +178,10 @@ const addDocumentType = ref([
   { "id": '34', "name": "收款单" }
 ])
 
-const addDocumentUrl = (data: any) =>{
-	let path
-	if(data.id === '32'){
-		path = '/settlement/payment/index'
-		
-	}else if(data.id === '34'){
-		path = '/settlement/receivePayment/index'
-	}
-	router.push({path})
-}
-
 const { getDataList, sizeChangeHandle, selectionChangeHandle, sortChangeHandle, currentChangeHandle, deleteBatchHandle, reset } = useCrud(state)
+
+// 引入窗口高度逻辑
+const { headHeight, listHeight, footHeight, occupyHeight, getHeadHeight, updateTableHeight,isArrowUpFu } = useWindowResize(165)
 </script>
 
 <style scoped>

@@ -306,7 +306,6 @@
 	//应付款总金额
 	const finalAmount = computed(() =>{
 		return dataForm.value.documentDetailList.reduce((sum, item) => {
-			// 将 amount 转换为数字，如果是字符串
 			return sum.plus(item.finalAmount || 0)
 		}, new Big(0))
 		

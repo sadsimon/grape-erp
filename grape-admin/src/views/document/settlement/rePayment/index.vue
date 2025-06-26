@@ -36,8 +36,6 @@
 								<el-input
 									v-model="dataForm.remark"
 									style="width: 540px"
-									:rows="1"
-									type="textarea"
 								  />
 							</el-form-item>
 						</el-col>

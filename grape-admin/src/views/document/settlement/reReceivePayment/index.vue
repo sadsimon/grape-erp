@@ -36,8 +36,6 @@
 								<el-input
 									v-model="dataForm.remark"
 									style="width: 540px"
-									:rows="1"
-									type="textarea"
 								  />
 							</el-form-item>
 						</el-col>
@@ -191,11 +189,6 @@
 				return false
 			}
 
-			/* if (dataForm.value.documentSettleDetailList.length === 0) {
-				ElMessage.error({
-					message: '入库商品不能为空'
-				})
-			} */
 			dataForm.value.finalAmount = 0
 			useDocumentSubmitApi(dataForm.value).then(() => {
 				ElMessage.success({
