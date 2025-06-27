@@ -1,20 +1,25 @@
 package net.grape.order.service.impl.documentHandler;
 
-import net.grape.order.vo.GrDocumentAccountDetailVO;
 import net.grape.order.vo.GrDocumentDetailVO;
 import net.grape.order.vo.GrDocumentVO;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * 32：付款单
+ *  39：预收款单
  */
-public class PaymentDocument implements Document{
+public class ReReceivePaymentCocument implements Document{
 
     private final DocumentConfig documentConfig;
 
-    public PaymentDocument(GrDocumentVO documentVO){
+    public ReReceivePaymentCocument(GrDocumentVO documentVO) {
+        BigDecimal advanceAmount = documentVO.getDocumentAccountDetailList().stream()
+                .map(accountDetail -> accountDetail.getAmount())
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        documentVO.setAdvanceIn(advanceAmount);
         this.documentConfig = new DocumentConfig();
         this.makeDocumentDetail(documentVO);
         this.makeSettleDetail(documentVO);
@@ -35,24 +40,14 @@ public class PaymentDocument implements Document{
 
     @Override
     public GrDocumentVO makeSettleDetail(GrDocumentVO documentVO) {
-        documentVO.getDocumentSettleDetailList().stream().forEach(settleDetail ->{settleDetail.setAmountType(documentVO.getAmountType());});
-        return documentVO;
+        return null;
     }
 
     @Override
     public GrDocumentVO makeAccountDetail(GrDocumentVO documentVO) {
         documentVO.getDocumentAccountDetailList().stream().forEach(accountDetail ->{
             accountDetail.setAmountType(documentVO.getAmountType());
-            accountDetail.setAccountType("1");});
-        //预付款
-        if (documentVO.getAdvanceOut() != null && documentVO.getAdvanceOut().compareTo(BigDecimal.ZERO) != 0) {
-            GrDocumentAccountDetailVO grDocumentAccountDetailVO = new GrDocumentAccountDetailVO();
-            grDocumentAccountDetailVO.setDocumentId(documentVO.getId());
-            grDocumentAccountDetailVO.setAmountType(documentVO.getAmountType());
-            grDocumentAccountDetailVO.setAccountType("2");
-            grDocumentAccountDetailVO.setAmount(documentVO.getAdvanceOut());
-            documentVO.getDocumentAccountDetailList().add(grDocumentAccountDetailVO);
-        }
+            accountDetail.setAccountType("2");});
         return documentVO;
     }
 

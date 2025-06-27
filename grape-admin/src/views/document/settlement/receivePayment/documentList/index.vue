@@ -54,15 +54,15 @@
 						<div class="text-with-border">{{ scope.row.pendingAmount }}</div>
 					</template>
 				</el-table-column>
-				<el-table-column fixed="right" class-name="el-table-column-text" prop="paymentAmount" align="center" label="付款金额">
+				<el-table-column fixed="right" class-name="el-table-column-text" prop="paymentAmount" align="center" label="收款金额">
 					<template #default="scope">
 						<gr-number-input :disabled="isfinish" v-model="scope.row['paymentAmount']"
 							@input="changeSumAmount(scope.$index)"></gr-number-input>
 					</template>
 				</el-table-column>
-				<el-table-column fixed="right" class-name="el-table-column-text" prop="advanceAmount" align="center" label="预付款金额">
+				<el-table-column fixed="right" class-name="el-table-column-text" prop="advanceIn" align="center" label="预收款金额">
 					<template #default="scope">
-						<gr-number-input :disabled="isfinish" v-model="scope.row['advanceAmount']"
+						<gr-number-input :disabled="isfinish" v-model="scope.row['advanceIn']"
 							@input="changeSumAmount(scope.$index)"></gr-number-input>
 					</template>
 				</el-table-column>
@@ -77,7 +77,6 @@
 						<div class="text-with-border">{{ scope.row.sumAmount }}</div>
 					</template>
 				</el-table-column>
-				
 			</template>
 		</GrSelectableTable>
 </template>
@@ -86,7 +85,7 @@
 	import { reactive, ref, onMounted, watch } from 'vue'
 	import { ElMessage } from 'element-plus/es'
 	import { documentDataInt } from '@/views/document/settlement/settlement'
-	import DocumentInput from '.././documentInput/index.vue'
+	import DocumentInput from '@/views/document/settlement/documentInput/index.vue'
 
 	const barcodeQuery = ref()
 	
@@ -140,14 +139,14 @@
 	const showSummaries = ref<SummaryConfig[]>([
 		{ prop: 'pendingAmount', decimal: 2 },
 		{ prop: 'paymentAmount', decimal: 2 },
-		{ prop: 'advanceAmount', decimal: 2 },
+		{ prop: 'advanceIn', decimal: 2 },
 		{ prop: 'discountAmount', decimal: 2 },
 		{ prop: 'sumAmount', decimal: 2 }
 	])
 
 	const fields = ref(['id', 'documentCode', 'documentType', 'documentTime', 
 	'contactunitsName', 'contactunitsCode', 'realName', 'remark', 'finalAmount', 
-	'pendingAmount','paymentAmount','advanceAmount','discountAmount','sumAmount'])
+	'pendingAmount','paymentAmount','advanceIn','discountAmount','sumAmount'])
 
 	const check = (index : number, rows : documentDataInt[]) => {
 		if (tableData.value.length === index + 1) {
@@ -162,12 +161,12 @@
 	}
 
 	const computedSumAmount = (row : documentDataInt) => {
-		row['sumAmount'] = (row['paymentAmount'] || 0) + (row['advanceAmount'] || 0) + (row['discountAmount'] || 0)
+		row['sumAmount'] = (row['paymentAmount'] || 0) + (row['advanceIn'] || 0) + (row['discountAmount'] || 0)
 	}
 
 	const changeSumAmount = (index : number) => {
 		tableData.value[index]['sumAmount'] = Number(tableData.value[index]['paymentAmount'])
-		+ Number(tableData.value[index]['advanceAmount']) + Number(tableData.value[index]['discountAmount'])
+		+ Number(tableData.value[index]['advanceIn']) + Number(tableData.value[index]['discountAmount'])
 	}
 	
 	//计算高度

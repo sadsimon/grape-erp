@@ -23,7 +23,7 @@
 						</el-col>
 						<el-col :span="24" :lg="6" :md="6" :sm="6" :xs='6'>
 							<el-form-item prop="contactunitsId" label="结算单位">
-								<GrContactunitsInput width="250px" :disabled="isfinish" v-model="dataForm.contactunitsId"></GrContactunitsInput>
+								<GrContactunitsInput width="250px" :disabled="isfinish" @select="updateBalance" v-model="dataForm.contactunitsId"></GrContactunitsInput>
 							</el-form-item>
 						</el-col>
 						<el-col :span="24" :lg="6" :md="6" :sm="6" :xs='6'>
@@ -44,6 +44,22 @@
 			</el-card>
 			<el-card class="main">
 				<AccountList :isfinish="isfinish" :height="listHeight" v-model:initialData="dataForm.documentAccountDetailList"></AccountList>
+				<div style="width: 100%; display: flex; justify-content: flex-end; margin-top: 4px;">
+					<el-space>
+						<el-form-item prop="advanceInt" label="使用预收款">
+							<el-input
+							v-model="dataForm.advanceInt"
+							      style="max-width: 300px"
+							      placeholder="金额"
+								  :disabled="isfinish"
+							    >
+								  <template #append>
+								  	  余额&nbsp;<span style="color: red;">{{ balance }}</span>
+								  </template>
+							    </el-input>
+						</el-form-item>
+					</el-space>
+				</div>			
 			</el-card>
 			<GrDocumentFoot @isArrowUp="isArrowUpFu" :maxHeight="350" height="255">
 				<el-tabs v-model="activeName" type="card">
@@ -85,7 +101,7 @@
 	import { IHooksOptions } from '@/hooks/interface'
 	import { useRouter, useRoute } from 'vue-router'
 	import AccountList from '.././accountList/index.vue'
-	import DocumentList from '.././documentList/index.vue'
+	import DocumentList from './documentList/index.vue'
 	import { ElMessage } from 'element-plus/es'
 	import { useDocumentSubmitApi, useGetDocumentCodeApi, useGetgetHistoryReceivePaymentApi, useDocumentApi } from '@/api/product/order'
 	import { DocumentAccountDetailInt, documentDataInt } from '.././settlement'
@@ -93,7 +109,8 @@
 	import { cloneDeep } from 'lodash-es'
 	import { closeTab } from '@/utils/tabs'
 	import { useWindowResize } from '@/views/document/useWindowResize'
-	
+	import { getContactunitsAdvanceOut } from '@/views/document/index'
+	import { calcChain } from '@/utils/accuracyCalc'
 
 	const isfinish = ref(false)
 	const saveRef = ref()
@@ -111,6 +128,7 @@
 		documentStatus : string
 		amountType: string
 		documentType: string
+		advanceInt: number | null
 		documentSettleDetailList : documentDataInt[]
 		documentAccountDetailList : DocumentAccountDetailInt[]
 	}
@@ -126,6 +144,7 @@
 		documentStatus: '1',
 		amountType: amountType.value,
 		documentType: documentType.value,
+		advanceInt: null,
 		documentSettleDetailList: [{
 			id: null,
 			documentCode: '',
@@ -138,7 +157,7 @@
 			finalAmount: null,
 			pendingAmount: null,
 			paymentAmount: null,
-			advanceAmount: null,
+			advanceInt: null,
 			discountAmount: null,
 			sumAmount: null
 		}],
@@ -244,12 +263,6 @@
 		}, 0))
 	})
 	
-	/* watch(
-		() => totalAmount.value,
-		(newValue) => {
-			dataForm.value.finalAmount = newValue;
-		}) */
-
 	const submitHandle = () => {
 		saveRef.value.validate((valid : boolean) => {
 			if (!valid) {
@@ -295,8 +308,33 @@
 		init(false)
 	})
 	
+	const contactunitBalance = ref(0)
+	//预付款余额
+	const balance = ref(0)
+	const updateBalance = async ()=>{
+		if(dataForm.value.contactunitsId){
+			contactunitBalance.value = await getContactunitsAdvanceOut(dataForm.value.contactunitsId)
+		}
+	}
+	
+	watch(
+	  ()=>dataForm.value.advanceInt,
+	  (newAmount) => {
+	    balance.value = calcChain(contactunitBalance.value).sub(newAmount || 0).toNumber()
+	  }
+	)
+	
+	watch(
+	  ()=>contactunitBalance.value,
+	  (newBalance) => {
+	    if (newBalance) {
+	      balance.value = calcChain(newBalance).sub(dataForm.value.advanceInt).toNumber()
+	    }
+	  }
+	)
+	
 	// 引入窗口高度逻辑
-	const { headHeight, listHeight, footHeight, occupyHeight, getHeadHeight, updateTableHeight,isArrowUpFu } = useWindowResize(160)
+	const { headHeight, listHeight, footHeight, occupyHeight, getHeadHeight, updateTableHeight,isArrowUpFu } = useWindowResize(195)
 </script>
 
 <style scoped>

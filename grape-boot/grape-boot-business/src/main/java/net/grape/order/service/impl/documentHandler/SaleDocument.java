@@ -56,12 +56,12 @@ public class SaleDocument implements Document{
             accountDetail.setAmountType(documentVO.getAmountType());
             accountDetail.setAccountType("1");});
         //预收款
-        if (documentVO.getAdvanceAmount() != null && documentVO.getAdvanceAmount().compareTo(BigDecimal.ZERO) != 0) {
+        if (documentVO.getAdvanceOut() != null && documentVO.getAdvanceOut().compareTo(BigDecimal.ZERO) != 0) {
             GrDocumentAccountDetailVO grDocumentAccountDetailVO = new GrDocumentAccountDetailVO();
             grDocumentAccountDetailVO.setDocumentId(documentVO.getId());
             grDocumentAccountDetailVO.setAmountType(documentVO.getAmountType());
-            grDocumentAccountDetailVO.setAccountType("2");
-            grDocumentAccountDetailVO.setAmount(documentVO.getAdvanceAmount());
+            grDocumentAccountDetailVO.setAccountType("3");
+            grDocumentAccountDetailVO.setAmount(documentVO.getAdvanceOut());
             documentVO.getDocumentAccountDetailList().add(grDocumentAccountDetailVO);
         }
         return documentVO;

@@ -10,7 +10,8 @@ export interface documentDataInt {
 	finalAmount: number | null
 	pendingAmount: number | null
 	paymentAmount: number | null
-	advanceAmount: number | null
+	advanceIn?: number | null
+	advanceOut?: number | null
 	discountAmount: number | null
 	sumAmount: number | null
 }
@@ -25,7 +26,8 @@ export interface SettleDetailInt {
 	settleDocumentCode: String
 	paymentAmount: number | null
 	amountType: string
-	advanceAmount: number | null
+	advanceIn?: number | null
+	advanceOut?: number | null
 	discountAmount: number | null
 }
 

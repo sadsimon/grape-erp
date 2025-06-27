@@ -44,32 +44,32 @@ public interface IGrContactunitsService extends BaseService<GrContactunitsEntity
     /**
      * 预收款
      * @param contactunitsId
-     * @param amount
+     * @param advanceIn
      * @param documentType
      */
-    public void updateAdvanceIn(Long contactunitsId, BigDecimal amount, String documentType);
+    public void updateAdvanceIn(Long contactunitsId, BigDecimal advanceIn, String documentType);
 
     /**
      * 回退预收款
      * @param contactunitsId
-     * @param amount
+     * @param advanceIn
      * @param documentType
      */
-    public void returnAdvanceIn(Long contactunitsId, BigDecimal amount, String documentType);
+    public void returnAdvanceIn(Long contactunitsId, BigDecimal advanceIn, String documentType);
 
     /**
      * 预付款
      * @param contactunitsId
-     * @param amount
+     * @param advanceOut
      * @param documentType
      */
-    public void updateAdvanceIOut(Long contactunitsId, BigDecimal amount, String documentType);
+    public void updateAdvanceIOut(Long contactunitsId, BigDecimal advanceOut, String documentType);
 
     /**
      * 回退预付款
      * @param contactunitsId
-     * @param amount
+     * @param advanceOut
      * @param documentType
      */
-    public void returnAdvanceIOut(Long contactunitsId, BigDecimal amount, String documentType);
+    public void returnAdvanceIOut(Long contactunitsId, BigDecimal advanceOut, String documentType);
 }

@@ -56,12 +56,12 @@ public class PurchaseReturnDocument implements Document{
             accountDetail.setAmountType(documentVO.getAmountType());
             accountDetail.setAccountType("1");});
         //预付款
-        if (documentVO.getAdvanceAmount() != null && documentVO.getAdvanceAmount().compareTo(BigDecimal.ZERO) != 0) {
+        if (documentVO.getAdvanceIn() != null && documentVO.getAdvanceIn().compareTo(BigDecimal.ZERO) != 0) {
             GrDocumentAccountDetailVO grDocumentAccountDetailVO = new GrDocumentAccountDetailVO();
             grDocumentAccountDetailVO.setDocumentId(documentVO.getId());
             grDocumentAccountDetailVO.setAmountType(documentVO.getAmountType());
             grDocumentAccountDetailVO.setAccountType("2");
-            grDocumentAccountDetailVO.setAmount(documentVO.getAdvanceAmount());
+            grDocumentAccountDetailVO.setAmount(documentVO.getAdvanceIn());
             documentVO.getDocumentAccountDetailList().add(grDocumentAccountDetailVO);
         }
         return documentVO;

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * 38：预付款单 39：预收款单
+ * 38：预付款单
  */
 public class RePaymentCocument implements Document{
 
@@ -19,7 +19,7 @@ public class RePaymentCocument implements Document{
                 .map(accountDetail -> accountDetail.getAmount())
                 .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        documentVO.setAdvanceAmount(advanceAmount);
+        documentVO.setAdvanceOut(advanceAmount);
         this.documentConfig = new DocumentConfig();
         this.makeDocumentDetail(documentVO);
         this.makeSettleDetail(documentVO);

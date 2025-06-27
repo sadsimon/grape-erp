@@ -39,9 +39,9 @@
 						<el-form ref="dataFormRef" style="margin-top: 15px;" :model="dataForm" :rules="dataRules" label-width="100px">
 							<el-row :gutter="5">
 								<el-col :span="24" :lg="24" :md="24" :sm="24">
-									<el-form-item prop="number" label="退预收款">
+									<el-form-item prop="advanceIn" label="退预收款">
 										<el-input
-										v-model="dataForm.advanceAmount"
+										v-model="dataForm.advanceIn"
 										      style="max-width: 300px"
 										      placeholder="金额"
 											  :disabled="isfinish"
@@ -139,11 +139,12 @@
 		finalAmount : number | null
 		documentStatus : string
 		documentType: string
+		advanceIn : number | null
 		documentDetailList : DocumentDetail[]
 		documentSettleDetailList : SettleDetailInt[]
 		documentAccountDetailList : DocumentAccountDetailInt[]
 		documentAccountDetailListDelete : number[]
-		advanceAmount : number | null
+		
 	}
 	
 	const initialDataForm = {
@@ -156,7 +157,7 @@
 		documentStatus: '2',
 		documentType: documentType.value,
 		amountType: amountType.value,
-		advanceAmount: null,
+		advanceIn: null,
 		documentDetailList: [{
 			'id': null,
 			'productId': null,
@@ -179,7 +180,6 @@
 			settleDocumentCode: '',
 			paymentAmount: null,
 			amountType: amountType.value,
-			advanceAmount: null,
 			discountAmount: null
 		}],
 		documentAccountDetailList:[{
@@ -235,7 +235,7 @@
 	}
 	
 	watch(
-	  ()=>dataForm.value.advanceAmount,
+	  ()=>dataForm.value.advanceIn,
 	  (newAmount) => {
 	    balance.value = calcChain(contactunitBalance.value).sub(newAmount || 0).toNumber()
 	  }
@@ -245,7 +245,7 @@
 	  ()=>contactunitBalance.value,
 	  (newBalance) => {
 	    if (newBalance) {
-	      balance.value = calcChain(newBalance).sub(dataForm.value.advanceAmount).toNumber()
+	      balance.value = calcChain(newBalance).sub(dataForm.value.advanceIn).toNumber()
 	    }
 	  }
 	)
@@ -302,14 +302,14 @@
 	const finalAmount = computed(() =>{
 		return dataForm.value.documentDetailList.reduce((sum, item) => {
 			return sum.plus(item.finalAmount || 0)
-		}, new Big(0))
+		}, new Big(0)).toNumber()
 	})
 	
 	//本单应收款(销售单)=-(应收金额-实际收款金额-预收款)
 	const shouldAmount = computed(() => {
 		return -(calcChain(finalAmount.value).sub(dataForm.value.documentAccountDetailList.reduce((sum, item) => {
 			return sum.plus(item.amount || 0)
-		}, new Big(0))).sub(dataForm.value.advanceAmount).toNumber())
+		}, new Big(0)).toNumber()).sub(dataForm.value.advanceIn).toNumber())
 	})
 	
 	//此前应收款

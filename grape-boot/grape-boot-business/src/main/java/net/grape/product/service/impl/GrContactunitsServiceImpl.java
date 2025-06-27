@@ -152,38 +152,38 @@ public class GrContactunitsServiceImpl extends BaseServiceImpl<GrContactunitsMap
     }
 
     @Override
-    public void updateAdvanceIn(Long contactunitsId, BigDecimal amount, String documentType) {
+    public void updateAdvanceIn(Long contactunitsId, BigDecimal advanceIn, String documentType) {
         if ("03".equals(documentType) || "38".equals(documentType)) {
-            addAdvanceIn(contactunitsId,amount);
-        }else if("02".equals(documentType)){
-            subAdvanceIn(contactunitsId,amount);
+            addAdvanceIn(contactunitsId,advanceIn);
+        }else if("02".equals(documentType) || "32".equals(documentType)){
+            subAdvanceIn(contactunitsId,advanceIn);
         }
     }
 
     @Override
-    public void returnAdvanceIn(Long contactunitsId, BigDecimal amount, String documentType) {
+    public void returnAdvanceIn(Long contactunitsId, BigDecimal advanceIn, String documentType) {
         if ("03".equals(documentType) || "38".equals(documentType)) {
-            subAdvanceIn(contactunitsId,amount);
-        }else if("02".equals(documentType)){
-            addAdvanceIn(contactunitsId,amount);
+            subAdvanceIn(contactunitsId,advanceIn);
+        }else if("02".equals(documentType) || "32".equals(documentType)){
+            addAdvanceIn(contactunitsId,advanceIn);
         }
     }
 
     @Override
-    public void updateAdvanceIOut(Long contactunitsId, BigDecimal amount, String documentType) {
+    public void updateAdvanceIOut(Long contactunitsId, BigDecimal advanceOut, String documentType) {
         if("14".equals(documentType) || "39".equals(documentType)){
-            addAdvanceOut(contactunitsId, amount);
-        }else if("13".equals(documentType)){
-            subAdvanceOut(contactunitsId, amount);
+            addAdvanceOut(contactunitsId, advanceOut);
+        }else if("13".equals(documentType) || "34".equals(documentType)){
+            subAdvanceOut(contactunitsId, advanceOut);
         }
     }
 
     @Override
-    public void returnAdvanceIOut(Long contactunitsId, BigDecimal amount, String documentType) {
+    public void returnAdvanceIOut(Long contactunitsId, BigDecimal advanceOut, String documentType) {
         if("14".equals(documentType) || "39".equals(documentType)){
-            subAdvanceOut(contactunitsId, amount);
-        }else if("13".equals(documentType)){
-            addAdvanceOut(contactunitsId, amount);
+            subAdvanceOut(contactunitsId, advanceOut);
+        }else if("13".equals(documentType) || "34".equals(documentType)){
+            addAdvanceOut(contactunitsId, advanceOut);
         }
     }
 

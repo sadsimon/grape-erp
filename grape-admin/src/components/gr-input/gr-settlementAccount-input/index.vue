@@ -27,6 +27,10 @@ defineProps({
 		type: String,
 		required: false,
 		default: '100%'
+	},
+	advanceType: {
+		type: String,
+		required: false,
 	}
 })
 const maDataSelectRef = ref<MaDataSelect | null>(null) // MaDataSelect 的 ref

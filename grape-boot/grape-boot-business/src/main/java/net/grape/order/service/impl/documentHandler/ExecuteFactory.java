@@ -16,9 +16,10 @@ public class ExecuteFactory {
                 document = new SaleDocument(documentVO);
             case "14" ->
                 document = new SaleReturnDocument(documentVO);
-            case "32",
-                 "34" ->
+            case "32" ->
                 document = new PaymentDocument(documentVO);
+            case "34" ->
+                    document = new ReceivePaymentDocument(documentVO);
             case "36",
                  "37" ->
                 document = new IncomeExpendDocument(documentVO);
@@ -26,9 +27,10 @@ public class ExecuteFactory {
                  "22",
                  "23" ->
                 document = new AllotDocument(documentVO);
-            case "38",
-                 "39" ->
+            case "38" ->
                 document = new RePaymentCocument(documentVO);
+            case "39" ->
+                document = new ReReceivePaymentCocument(documentVO);
             default ->
                 throw new IllegalArgumentException("Unknown document type: " + documentVO.getDocumentType());
         }

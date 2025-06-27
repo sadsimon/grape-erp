@@ -34,10 +34,16 @@ public class GrDocumentSettleDetailVO {
     private BigDecimal paymentAmount;
 
     /**
+     * 预收款金额
+     */
+    @Schema(description = "预收款金额")
+    private BigDecimal advanceIn;
+
+    /**
      * 预付款金额
      */
     @Schema(description = "预付款金额")
-    private BigDecimal advanceAmount;
+    private BigDecimal advanceOut;
 
     /**
      * 优惠金额

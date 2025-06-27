@@ -122,9 +122,9 @@ public class GrDocumentServiceImpl extends BaseServiceImpl<GrDocumentMapper, GrD
         iGrDocumentSettleDetailService.saveOrUpdateList(vo.getDocumentSettleDetailList(),grDocumentEntity.getId());
         //账户收款/扣款
         iGrDocumentAccountDetailService.saveOrUpdateList(vo.getDocumentAccountDetailList(),grDocumentEntity.getId());
-        //预付款、预收款
-        iGrContactunitsService.updateAdvanceIn(vo.getContactunitsId(), vo.getAdvanceAmount(), vo.getDocumentType());
-        iGrContactunitsService.updateAdvanceIOut(vo.getContactunitsId(), vo.getAdvanceAmount(), vo.getDocumentType());
+        //扣往来单位的预付款、预收款（单据的预付款==往来单位的预收款，反之亦然）
+        iGrContactunitsService.updateAdvanceIn(vo.getContactunitsId(), vo.getAdvanceOut(), vo.getDocumentType());
+        iGrContactunitsService.updateAdvanceIOut(vo.getContactunitsId(), vo.getAdvanceIn(), vo.getDocumentType());
     }
 
     @Override
@@ -152,9 +152,9 @@ public class GrDocumentServiceImpl extends BaseServiceImpl<GrDocumentMapper, GrD
         iGrDocumentSettleDetailService.saveOrUpdateList(vo.getDocumentSettleDetailList(), grDocumentEntity.getId());
         //账户收款/扣款
         iGrDocumentAccountDetailService.saveOrUpdateList(vo.getDocumentAccountDetailList(), grDocumentEntity.getId());
-        //预付款、预收款
-        iGrContactunitsService.updateAdvanceIn(vo.getContactunitsId(), vo.getAdvanceAmount(), vo.getDocumentType());
-        iGrContactunitsService.updateAdvanceIOut(vo.getContactunitsId(), vo.getAdvanceAmount(), vo.getDocumentType());
+        //扣往来单位的预付款、预收款（单据的预付款==往来单位的预收款，反之亦然）
+        iGrContactunitsService.updateAdvanceIn(vo.getContactunitsId(), vo.getAdvanceOut(), vo.getDocumentType());
+        iGrContactunitsService.updateAdvanceIOut(vo.getContactunitsId(), vo.getAdvanceIn(), vo.getDocumentType());
     }
 
     private void returnStock(Long id,boolean isNeedStock){
@@ -169,13 +169,19 @@ public class GrDocumentServiceImpl extends BaseServiceImpl<GrDocumentMapper, GrD
 
     private void returnAdvance(Long id, Long contactunitsId, String documentType){
         List<GrDocumentAccountDetailVO> accountDetailList = iGrDocumentAccountDetailService.getlistByDocumentId(id);
-        BigDecimal totalAmount = accountDetailList.stream()
+        BigDecimal advanceOut = accountDetailList.stream()
                 .filter(detail -> "2".equals(detail.getAccountType()))
                 .map(accountDetail -> accountDetail.getAmount())
                 .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        iGrContactunitsService.returnAdvanceIn(contactunitsId, totalAmount, documentType);
-        iGrContactunitsService.returnAdvanceIOut(contactunitsId, totalAmount, documentType);
+        BigDecimal advanceIn = accountDetailList.stream()
+                .filter(detail -> "3".equals(detail.getAccountType()))
+                .map(accountDetail -> accountDetail.getAmount())
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        //单据的预付款==往来单位的预收款，反之亦然
+        iGrContactunitsService.returnAdvanceIn(contactunitsId, advanceOut, documentType);
+        iGrContactunitsService.returnAdvanceIOut(contactunitsId, advanceIn, documentType);
     }
 
     @Override
