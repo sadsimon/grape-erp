@@ -77,7 +77,9 @@
 	import { cloneDeep } from 'lodash-es'
 	import { closeTab } from '@/utils/tabs'
 	import { useWindowResize } from '@/views/document/useWindowResize'
-
+	import { calcChain } from '@/utils/accuracyCalc'
+	import Big from 'big.js'
+	
 	const isfinish = ref(false)
 	const saveRef = ref()
 	const amountType = ref('2')
@@ -162,13 +164,13 @@
 		}
 		isfinish.value = false
 	}
-	
+
 	const getDocument= (id: number) =>{
 		useDocumentApi(id).then(res=>{
 			dataForm.value = res.data
 		})
 	}
-	
+
 	const getDocumentCode = () => {
 		useGetDocumentCodeApi(documentType.value).then(res => {
 			dataForm.value.documentCode = res.data
@@ -178,9 +180,8 @@
 	//总金额
 	const totalPayAmount = computed(() => {
 		return dataForm.value.documentAccountDetailList.reduce((sum, item) => {
-			const amount = Number(item.amount) || 0
-			return sum + amount
-		}, 0)
+			return sum.plus(item.amount || 0)
+		}, new Big(0)).toNumber()
 	})
 	
 	const submitHandle = () => {
@@ -189,11 +190,6 @@
 				return false
 			}
 
-			/* if (dataForm.value.documentSettleDetailList.length === 0) {
-				ElMessage.error({
-					message: '入库商品不能为空'
-				})
-			} */
 			dataForm.value.finalAmount = 0
 			useDocumentSubmitApi(dataForm.value).then(() => {
 				ElMessage.success({

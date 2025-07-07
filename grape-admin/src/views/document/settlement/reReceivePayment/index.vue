@@ -77,6 +77,7 @@
 	import { cloneDeep } from 'lodash-es'
 	import { closeTab } from '@/utils/tabs'
 	import { useWindowResize } from '@/views/document/useWindowResize'
+	import Big from 'big.js'
 
 	const isfinish = ref(false)
 	const saveRef = ref()
@@ -178,9 +179,8 @@
 	//总金额
 	const totalPayAmount = computed(() => {
 		return dataForm.value.documentAccountDetailList.reduce((sum, item) => {
-			const amount = Number(item.amount) || 0
-			return sum + amount
-		}, 0)
+			return sum.plus(item.amount || 0)
+		}, new Big(0)).toNumber()
 	})
 	
 	const submitHandle = () => {

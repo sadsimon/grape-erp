@@ -111,6 +111,7 @@
 	import { useWindowResize } from '@/views/document/useWindowResize'
 	import { getContactunitsAdvanceOut } from '@/views/document/index'
 	import { calcChain } from '@/utils/accuracyCalc'
+	import Big from 'big.js'
 
 	const isfinish = ref(false)
 	const saveRef = ref()
@@ -217,17 +218,15 @@
 	const totalAmount = computed(() => {
 		//此前应收款-当前收款
 		return historyReceivePayment.value - dataForm.value.documentAccountDetailList.reduce((sum, item) => {
-			const amount = Number(item.amount) || 0
-			return sum + amount
-		}, 0)
+			return sum.plus(item.amount || 0)
+		}, new Big(0)).toNumber()
 	})
 
 	//本单可冲抵应付
 	const totalPayAmount = computed(() => {
 		return dataForm.value.documentAccountDetailList.reduce((sum, item) => {
-			const amount = Number(item.amount) || 0
-			return sum + amount
-		}, 0)
+			return sum.plus(item.amount || 0)
+		}, new Big(0)).toNumber()
 	})
 	
 	//此前应收款
@@ -251,16 +250,12 @@
 	
 	//按单算差异
 	const differenceAmount = computed(() => {
-		return (dataForm.value.documentAccountDetailList.reduce((sum, item) => {
-			// 将 amount 转换为数字，如果是字符串
-			const amount = Number(item.amount) || 0
-			return sum + amount
-		}, 0) -
-		dataForm.value.documentSettleDetailList.reduce((sum, item) => {
-			// 将 amount 转换为数字，如果是字符串
-			const amount = Number(item.sumAmount) || 0
-			return sum + amount
-		}, 0))
+		return (calcChain(dataForm.value.documentAccountDetailList.reduce((sum, item) => {
+			return sum.plus(item.amount || 0)
+		}, new Big(0))).sub(dataForm.value.documentSettleDetailList.reduce((sum, item) => {
+			return sum.plus(item.sumAmount || 0)
+		}, new Big(0)))
+		)
 	})
 	
 	const submitHandle = () => {
