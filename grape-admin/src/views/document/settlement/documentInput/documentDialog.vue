@@ -96,7 +96,7 @@ const props = defineProps({
 
 const queryRef = ref()
 
-const state: IHooksOptions = reactive({
+const state: IHooksOptions = reactive({ 
 	dataListUrl: '/order/grDocument/pageCheckList',
 	queryForm: {
 		documentTimes: [],
