@@ -31,7 +31,7 @@ public class PurchaseOrderDocument implements Document{
     public GrDocumentVO makeDocumentDetail(GrDocumentVO documentVO) {
         //过滤掉为空的数据
         List<GrDocumentDetailVO> filteredList = documentVO.getDocumentDetailList().stream().filter(
-                detail -> detail.getProductId() != null && detail.getProjectId() != null).toList() ;
+                detail -> detail.getProductId() != null || detail.getProjectId() != null).toList() ;
         documentVO.setDocumentDetailList(filteredList);
         return documentVO;
     }
