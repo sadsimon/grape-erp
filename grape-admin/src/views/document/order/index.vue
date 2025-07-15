@@ -31,7 +31,15 @@
 				</el-form>
 			</el-card>
 			<el-card class="main">
+				<el-space>
+					<el-input :disabled="isfinish" v-model="barcodeQuery" style="width: 350px" placeholder="扫码枪精准匹配"
+						@keydown.enter="checkByBarcode">
+						<template #prepend>条码</template>
+					</el-input>
+					<GrFile />
+				</el-space>
 				<List :isfinish="isfinish" :height="listHeight" v-model:initialData="dataForm.documentDetailList"></List>
+				
 			</el-card>
 			<GrDocumentFoot @isArrowUp="isArrowUpFu" maxHeight="300" height="150">
 				<el-tabs v-model="activeName" type="card">
@@ -80,7 +88,7 @@
 						</el-form>
 					</el-tab-pane>
 					<el-tab-pane label="附件" name="settlement">
-						<div style="margin: 15px; max-width: 400px;"><MaUploadFile /></div>
+						<div style="margin: 15px; max-width: 400px;"> <!-- <MaUploadFile /> --></div>
 						
 					</el-tab-pane>
 				</el-tabs>
@@ -132,6 +140,8 @@
 	const router = useRouter()
 	const amountType = ref('2')
 	const documentType = ref('02')
+	
+	const barcodeQuery = ref()
 	
 	interface DataForm {
 		id : number | null
@@ -389,6 +399,10 @@
 	onMounted(()=>{
 		init(false)
 	})
+	
+	const checkByBarcode=()=>{
+		
+	}
 	
 	// 引入窗口高度逻辑
 	const { headHeight, listHeight, footHeight, occupyHeight, getHeadHeight, updateTableHeight,isArrowUpFu } = useWindowResize(190)

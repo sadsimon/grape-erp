@@ -11,7 +11,7 @@
 		</template>
 	</el-input>
 
-	<el-dialog
+	<GrDialog
 		:model-value="visible"
 		title="联系地址"
 		:close-on-click-modal="false"
@@ -38,7 +38,7 @@
 			<el-button @click="visible = false">取消</el-button>
 			<el-button type="primary" @click="submitHandle()">确定</el-button>
 		</template>
-	</el-dialog>
+	</GrDialog>
 </template>
 
 <script setup lang="ts" name="GrAddressInput">

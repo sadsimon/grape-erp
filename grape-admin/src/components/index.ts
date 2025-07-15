@@ -53,6 +53,7 @@ import GrDocumentFoot from '@/components/gr-document/gr-document-foot/index.vue'
 import GrIncomeExpendInput from '@/components/gr-input/gr-incomeExpend-input/index.vue'
 import IncomeExpendAddOrUpdate from '@/components/gr-input/gr-incomeExpend-input/IncomeExpend-add-or-update.vue'
 import GrButton from '@/components/gr-button/index.vue'
+import GrFile from '@/components/gr-file/index.vue'
 
 const components = [
 	MaEditor,
@@ -106,7 +107,8 @@ const components = [
 	GrStoreMultipleInput,
 	GrIncomeExpendInput,
 	IncomeExpendAddOrUpdate,
-	GrButton
+	GrButton,
+	GrFile
 ]
 
 const MaComponent: Plugin = {

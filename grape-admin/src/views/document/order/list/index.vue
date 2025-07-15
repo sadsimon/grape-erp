@@ -1,13 +1,5 @@
 <template>
-		<el-space>
-			<el-space>
-				<el-input :disabled="isfinish" v-model="barcodeQuery" style="width: 350px" placeholder="扫码枪精准匹配"
-					@keydown.enter="checkByBarcode">
-					<template #prepend>条码</template>
-				</el-input>
-				<!-- <GrField /> -->
-			</el-space>
-		</el-space>
+		
 			
 		<GrSelectableTable  :height="listHeight" ref="tableRef" :initial-data="tableData" :fields="fields" :summaries="showSummaries">
 			<template #columns>
