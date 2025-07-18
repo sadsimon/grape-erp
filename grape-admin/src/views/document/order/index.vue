@@ -36,7 +36,7 @@
 						@keydown.enter="checkByBarcode">
 						<template #prepend>条码</template>
 					</el-input>
-					<GrFile />
+					<GrFile :businessCode="dataForm.documentCode" />
 				</el-space>
 				<List :isfinish="isfinish" :height="listHeight" v-model:initialData="dataForm.documentDetailList"></List>
 				

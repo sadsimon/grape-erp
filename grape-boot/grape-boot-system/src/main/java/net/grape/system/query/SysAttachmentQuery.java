@@ -21,4 +21,6 @@ public class SysAttachmentQuery extends Query {
     @Schema(description = "存储平台")
     private String platform;
 
+    @Schema(description = "关联code")
+    private String businessCode;
 }

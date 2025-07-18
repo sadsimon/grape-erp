@@ -12,21 +12,20 @@ public class CodeGenerator {
     public static void main(String[] args) {
 
         //已生成过的，重新执行只覆盖entity实体类;手动删除可再次生成
-        String table = "gr_document_settle_detail";
+        String table = "sys_attachment";
 
         //项目地址
         String dir = "E:/workspace/grape-erp/";
 
         //模块名称
-        String module = "order";
+        //String module = "order";
         //String module = "stock";
         //String module = "product";
-        //String module = "system";
+        String module = "system";
 
         //输出地址
-        String dir1 = "/grape-boot/grape-boot-business/src/main/";
-
-        //String dir1 = "/grape-boot/grape-boot-system/src/main/";
+        //String dir1 = "/grape-boot/grape-boot-business/src/main/";
+        String dir1 = "/grape-boot/grape-boot-system/src/main/";
 
         Scanner scanner = new Scanner(System.in); // 创建 Scanner 对象用于读取控制台输入
 

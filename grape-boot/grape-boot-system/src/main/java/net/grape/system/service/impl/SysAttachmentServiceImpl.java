@@ -38,6 +38,7 @@ public class SysAttachmentServiceImpl extends BaseServiceImpl<SysAttachmentDao, 
     private LambdaQueryWrapper<SysAttachmentEntity> getWrapper(SysAttachmentQuery query) {
         LambdaQueryWrapper<SysAttachmentEntity> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(StrUtil.isNotBlank(query.getPlatform()), SysAttachmentEntity::getPlatform, query.getPlatform());
+        wrapper.eq(StrUtil.isNotBlank(query.getBusinessCode()), SysAttachmentEntity::getBusinessCode, query.getBusinessCode());
         wrapper.like(StrUtil.isNotBlank(query.getName()), SysAttachmentEntity::getName, query.getName());
         wrapper.orderByDesc(SysAttachmentEntity::getId);
         return wrapper;

@@ -2,7 +2,7 @@
 	<el-button @click="visible = true">
 		<ma-icon size='23' icon="icon-attachment" />
 	</el-button>
-	<FileAddOrUpdateDialog v-if="visible" :key="visible + ''" v-model:visible="visible" @select="userHandle"> </FileAddOrUpdateDialog>
+	<FileAddOrUpdateDialog v-if="visible" :key="visible + ''" v-model:visible="visible" :businessCode> </FileAddOrUpdateDialog>
 </template>
 
 <script setup lang="ts" name="GrFile">
@@ -13,19 +13,12 @@
 	
 	const visible = ref(false)
 	
-	
-	const userHandle =()=>{
-		
-	}
-	const state: IHooksOptions = reactive({
-		dataListUrl: '/product/grBrand/page',
-		deleteUrl: '/product/grBrand',
-		queryForm: {
-			param: ''
+	const props = defineProps({
+		businessCode: {
+			type: String,
+			required: true
 		}
 	})
-	
-	const { getDataList, sizeChangeHandle, selectionChangeHandle, sortChangeHandle, currentChangeHandle, deleteBatchHandle, reset } = useCrud(state)
 	
 </script>
 

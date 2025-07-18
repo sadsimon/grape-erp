@@ -1,20 +1,26 @@
 package net.grape.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import java.io.Serializable;
 import net.grape.framework.mybatis.entity.BaseEntity;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
+ * <p>
  * 附件管理
+ * </p>
  *
- * @author 1161095164@qq.com
- *
+ * @author 疯狂的老码
+ * @since 2025-07-18
  */
-@Data
-@EqualsAndHashCode(callSuper = false)
+@Getter
+@Setter
 @TableName("sys_attachment")
 public class SysAttachmentEntity extends BaseEntity {
+
+    private static final long serialVersionUID = 1L;
+
     /**
      * 附件名称
      */
@@ -34,9 +40,9 @@ public class SysAttachmentEntity extends BaseEntity {
      * 存储平台
      */
     private String platform;
-    /**
-     * 租户ID
-     */
-    private Long tenantId;
 
+    /**
+     * 关联业务code
+     */
+    private String businessCode;
 }
