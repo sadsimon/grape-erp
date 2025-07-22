@@ -38,7 +38,7 @@
 					</el-input>
 					<GrFile :businessCode="dataForm.documentCode" />
 				</el-space>
-				<List :isfinish="isfinish" :height="listHeight" v-model:initialData="dataForm.documentDetailList"></List>
+				<List ref="detailListRef" :isfinish="isfinish" :height="listHeight" v-model:initialData="dataForm.documentDetailList"></List>
 				
 			</el-card>
 			<GrDocumentFoot @isArrowUp="isArrowUpFu" maxHeight="300" height="150">
@@ -86,10 +86,6 @@
 							</el-row>
 							
 						</el-form>
-					</el-tab-pane>
-					<el-tab-pane label="附件" name="settlement">
-						<div style="margin: 15px; max-width: 400px;"> <!-- <MaUploadFile /> --></div>
-						
 					</el-tab-pane>
 				</el-tabs>
 			</GrDocumentFoot>
@@ -141,7 +137,7 @@
 	const amountType = ref('2')
 	const documentType = ref('02')
 	
-	const barcodeQuery = ref()
+	const barcodeQuery = ref('')
 	
 	interface DataForm {
 		id : number | null
@@ -400,8 +396,10 @@
 		init(false)
 	})
 	
-	const checkByBarcode=()=>{
-		
+	const detailListRef = ref()
+	const checkByBarcode = () => {
+		detailListRef.value.checkByBarcode(barcodeQuery.value)
+		barcodeQuery.value =''
 	}
 	
 	// 引入窗口高度逻辑

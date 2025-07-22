@@ -1,6 +1,4 @@
 <template>
-		
-			
 		<GrSelectableTable  :height="listHeight" ref="tableRef" :initial-data="tableData" :fields="fields" :summaries="showSummaries">
 			<template #columns>
 				<el-table-column type="index" align="center" width="40" />
@@ -101,8 +99,6 @@
 	import { DocumentDetail } from '@/views/document/index'
 	import { cloneDeep } from 'lodash-es'
 	import { calcChain } from '@/utils/accuracyCalc'
-
-	const barcodeQuery = ref()
 	
 	interface SelectableTableMethods {
 		addRow : (index : number) => void
@@ -182,8 +178,8 @@
 		emit('update:initialData', tableData)
 	}
 
-	const checkByBarcode = () => {
-		useBarcodeApi(barcodeQuery.value).then(res => {
+	const checkByBarcode = (barcodeQuery: string) => {
+		useBarcodeApi(barcodeQuery).then(res => {
 			if (res.data === null) {
 				ElMessage.warning('未查询到数据')
 			} else {
@@ -203,7 +199,6 @@
 				
 				emit('update:initialData', tableData)
 			}
-			barcodeQuery.value = null
 		})
 	}
 
@@ -292,6 +287,10 @@
 			listHeight.value = Number(newVal)
 		}
 	)
+	
+	defineExpose({
+		checkByBarcode
+	})
 	
 </script>
 

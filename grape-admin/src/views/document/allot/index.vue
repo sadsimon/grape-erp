@@ -28,7 +28,15 @@
 				</el-form>
 			</el-card>
 			<el-card class="main">
-				<List ref="listRef" :isfinish="isfinish" :height="listHeight" v-model:initialData="dataForm.documentDetailList"></List>
+				<el-space>
+					<el-input :disabled="isfinish" v-model="barcodeQuery" style="width: 350px" placeholder="扫码枪精准匹配"
+						@keydown.enter="checkByBarcode">
+						<template #prepend>条码</template>
+					</el-input>
+					<GrFile :businessCode="dataForm.documentCode" />
+				</el-space>
+				
+				<List ref="detailListRef" :isfinish="isfinish" :height="listHeight" v-model:initialData="dataForm.documentDetailList"></List>
 			</el-card>
 			
 			<el-card>
@@ -68,6 +76,7 @@
 	
 	const amountType = ref('3')
 	const documentType = ref('21')
+	const barcodeQuery = ref('')
 	
 	interface DataForm {
 		contactunitsId : number | null
@@ -118,12 +127,12 @@
 		init()
 	}
 	
-	const listRef = ref()
+	const detailListRef = ref()
 	const copyNext =() =>{
 		getDocumentCode()
 		dataForm.value.documentTime = getCurrentDate()
 		isfinish.value = false
-		listRef.value.refresh()
+		detailListRef.value.refresh()
 		ElMessage.success({
 			message: '复制成功'
 		})
@@ -172,6 +181,11 @@
 		contactunitsId: [{ required: true, message: '必填项不能为空', trigger: 'change' }],
 		documentTime: [{ required: true, message: '必填项不能为空', trigger: 'change' }]
 	})
+	
+	const checkByBarcode = () => {
+		detailListRef.value.checkByBarcode(barcodeQuery.value)
+		barcodeQuery.value =''
+	}
 	
 	// 引入窗口高度逻辑
 	const { headHeight, listHeight, footHeight, occupyHeight, getHeadHeight, updateTableHeight,isArrowUpFu } = useWindowResize(190)

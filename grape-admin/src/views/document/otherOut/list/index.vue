@@ -1,14 +1,4 @@
 <template>
-		<el-space>
-			<el-space>
-				<el-input :disabled="isfinish" v-model="barcodeQuery" style="width: 350px" placeholder="扫码枪精准匹配"
-					@keydown.enter="checkByBarcode">
-					<template #prepend>条码</template>
-				</el-input>
-				<GrField />
-			</el-space>
-		</el-space>
-			
 		<GrSelectableTable  :height="listHeight" ref="tableRef" :initial-data="tableData" :fields="fields" :summaries="showSummaries">
 			<template #columns>
 				<el-table-column label="操作" align="center" width="100" v-if="!isfinish">
@@ -165,6 +155,7 @@
 				row['quantity'] = 1
 				tableData.value.push(row)
 			})
+			tableRef.value?.addRow(index + 1)
 		} else {
 			rows[0]['unitPrice'] = rows[0]['expectPurchasePrice']
 			rows[0]['quantity'] = 1
@@ -175,8 +166,8 @@
 		emit('update:initialData', tableData)
 	}
 
-	const checkByBarcode = () => {
-		useBarcodeApi(barcodeQuery.value).then(res => {
+	const checkByBarcode = (barcodeQuery: string) => {
+		useBarcodeApi(barcodeQuery).then(res => {
 			if (res.data === null) {
 				ElMessage.warning('未查询到数据')
 			} else {
@@ -189,6 +180,7 @@
 					}
 					res.data['quantity'] = 1
 					tableData.value.push(res.data)
+					tableRef.value?.addRow(tableData.value.length)
 				}
 				computedAmount(tableData.value[existingIndex])
 				emit('update:initialData', tableData)
@@ -258,7 +250,7 @@
 		})
 	}
 	defineExpose({
-		refresh
+		refresh,checkByBarcode
 	})
 </script>
 
