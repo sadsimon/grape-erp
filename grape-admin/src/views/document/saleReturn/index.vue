@@ -31,13 +31,15 @@
 				</el-form>
 			</el-card>
 			<el-card class="main">
-				<el-space>
-					<el-input :disabled="isfinish" v-model="barcodeQuery" style="width: 350px" placeholder="扫码枪精准匹配"
-						@keydown.enter="checkByBarcode">
-						<template #prepend>条码</template>
-					</el-input>
+				<div style="width: 100%; display: flex;">
+					<div style="flex: 1;">
+						<el-input :disabled="isfinish" v-model="barcodeQuery" style="width: 350px" placeholder="扫码枪精准匹配"
+							@keydown.enter="checkByBarcode">
+							<template #prepend>条码</template>
+						</el-input>
+					</div>
 					<GrFile :businessCode="dataForm.documentCode" />
-				</el-space>
+				</div>
 				
 				<List ref="detailListRef" :isfinish="isfinish" :height="listHeight" v-model:initialData="dataForm.documentDetailList"></List>
 			</el-card>

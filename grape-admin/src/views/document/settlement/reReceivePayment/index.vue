@@ -4,45 +4,37 @@
 		<el-container class="layout-container">
 			<el-card class="head layout-query">
 				<el-form ref="saveRef" :inline="true" :rules="dataRules" :model="dataForm">
-					<div style="font-size:20px; text-align:center;margin-bottom: 15px;">预收款单</div>
-					<el-row>
-						<el-col :span="24" :lg="6" :md="6" :sm="6" :xs='6'>
-							<el-form-item prop="documentCode" label="单据编号">
-								<el-input readonly v-model="dataForm.documentCode"></el-input>
-							</el-form-item>
-						</el-col>
-						<el-col :span="24" :lg="6" :md="6" :sm="6" :xs='6'>
-							<el-form-item prop="documentTime" label="录单时间">
-								<el-date-picker
-										v-model="dataForm.documentTime"
-										type="datetime"
-										value-format="YYYY-MM-DD HH:mm:ss"
-										:disabled="isfinish"
-									  />
-							</el-form-item>
-						</el-col>
-						<el-col :span="24" :lg="6" :md="6" :sm="6" :xs='6'>
-							<el-form-item prop="contactunitsId" label="结算单位">
-								<GrContactunitsInput width="250px" :disabled="isfinish" v-model="dataForm.contactunitsId"></GrContactunitsInput>
-							</el-form-item>
-						</el-col>
-						<el-col :span="24" :lg="6" :md="6" :sm="6" :xs='6'>
-							<el-form-item prop="userId" label="经手人">
-								<MaUserInput :disabled="isfinish" v-model="dataForm.userId"></MaUserInput>
-							</el-form-item>
-						</el-col>
-						<el-col :span="24" :lg="6" :md="6" :sm="6" :xs='6'>
-							<el-form-item prop="remark" label="备注">
-								<el-input
-									v-model="dataForm.remark"
-									style="width: 540px"
-								  />
-							</el-form-item>
-						</el-col>
-					</el-row>
+					<div style="font-size:20px; text-align:center;margin-bottom: 15px;">支出单</div>
+					<el-form-item prop="documentCode" label="单据编号">
+						<el-input readonly v-model="dataForm.documentCode"></el-input>
+					</el-form-item>
+					<el-form-item prop="documentTime" label="录单时间">
+						<el-date-picker
+						        v-model="dataForm.documentTime"
+						        type="datetime"
+								value-format="YYYY-MM-DD HH:mm:ss"
+								:disabled="isfinish"
+						      />
+					</el-form-item>
+					<el-form-item prop="contactunitsId" label="结算单位">
+						<GrContactunitsInput width="250px" :disabled="isfinish" v-model="dataForm.contactunitsId"></GrContactunitsInput>
+					</el-form-item>
+					<el-form-item prop="userId" label="经手人">
+						<MaUserInput :disabled="isfinish" v-model="dataForm.userId"></MaUserInput>
+					</el-form-item>
+					<el-form-item prop="remark" label="备注">
+						<el-input
+						    v-model="dataForm.remark"
+						    style="width: 540px"
+						  />
+					</el-form-item>
 				</el-form>
 			</el-card>
 			<el-card class="main">
+				<div style="width: 100%; display: flex;">
+					<div style="flex: 1;" />
+					<GrFile :businessCode="dataForm.documentCode" />
+				</div>
 				<AccountList :isfinish="isfinish" :height="listHeight" v-model:initialData="dataForm.documentAccountDetailList"></AccountList>
 			</el-card>
 			<el-card>
@@ -224,7 +216,7 @@
 	})
 	
 	// 引入窗口高度逻辑
-	const { headHeight, listHeight, footHeight, occupyHeight, getHeadHeight, updateTableHeight,isArrowUpFu } = useWindowResize(160)
+	const { headHeight, listHeight, footHeight, occupyHeight, getHeadHeight, updateTableHeight,isArrowUpFu } = useWindowResize(190)
 </script>
 
 <style scoped>

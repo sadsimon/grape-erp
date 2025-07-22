@@ -31,6 +31,10 @@
 				</el-form>
 			</el-card>
 			<el-card class="main">
+				<div style="width: 100%; display: flex;">
+					<div style="flex: 1;" />
+					<GrFile :businessCode="dataForm.documentCode" />
+				</div>
 				<IncomeExpendList :amountType="amountType" :isfinish="isfinish" :height="listHeight" v-model:initialData="dataForm.documentDetailList"></IncomeExpendList>
 			</el-card>
 			<GrDocumentFoot @isArrowUp="isArrowUpFu" maxHeight="300" height="150">
@@ -333,7 +337,7 @@
 		init(false)
 	})
 	// 引入窗口高度逻辑
-	const { headHeight, listHeight, footHeight, occupyHeight, getHeadHeight, updateTableHeight,isArrowUpFu } = useWindowResize(160)
+	const { headHeight, listHeight, footHeight, occupyHeight, getHeadHeight, updateTableHeight,isArrowUpFu } = useWindowResize(192)
 </script>
 
 <style scoped>
