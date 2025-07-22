@@ -244,9 +244,9 @@
 	const differenceAmount = computed(() => {
 		return (calcChain(dataForm.value.documentAccountDetailList.reduce((sum, item) => {
 			return sum.plus(item.amount || 0)
-		}, new Big(0))).sub(dataForm.value.documentSettleDetailList.reduce((sum, item) => {
+		}, new Big(0)).toNumber()).sub(dataForm.value.documentSettleDetailList.reduce((sum, item) => {
 			return sum.plus(item.sumAmount || 0)
-		}, new Big(0)))
+		}, new Big(0)).toNumber())
 		)
 	})
 	
