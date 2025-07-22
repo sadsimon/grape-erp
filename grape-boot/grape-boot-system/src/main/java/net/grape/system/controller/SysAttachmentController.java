@@ -39,6 +39,13 @@ public class SysAttachmentController {
         return Result.ok(page);
     }
 
+    @GetMapping("list")
+    @Operation(summary = "列表")
+    public Result<List<SysAttachmentVO>> list(String businessCode) {
+        List<SysAttachmentVO> list = sysAttachmentService.list(businessCode);
+        return Result.ok(list);
+    }
+
     @PostMapping
     @Operation(summary = "保存")
     @OperateLog(type = OperateTypeEnum.INSERT)

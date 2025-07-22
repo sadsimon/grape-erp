@@ -18,6 +18,8 @@ public interface SysAttachmentService extends BaseService<SysAttachmentEntity> {
 
     PageResult<SysAttachmentVO> page(SysAttachmentQuery query);
 
+    List<SysAttachmentVO> list(String businessCode);
+
     void save(SysAttachmentVO vo);
 
     void update(SysAttachmentVO vo);

@@ -20,11 +20,11 @@
 						{{ convertSizeFormat(scope.row.size) }}
 					</template>
 				</el-table-column>
-				<el-table-column prop="creator" width="150" label="上传人" header-align="center" align="center" />
+				<el-table-column prop="creatorName" width="150" label="上传人" header-align="center" align="center" />
 				<el-table-column prop="createTime" width="170" label="上传时间" header-align="center" align="center" />
 			</el-table>
 			<div style="width:760px; display:flex; justify-content:flex-start;">
-			  <FileUpload />
+			  <FileUpload :businessCode @afterUpload="refreshList"/>
 			</div>
 			
 		</el-space>
@@ -55,16 +55,22 @@
 	const emit = defineEmits(['update:visible'])
 	
 	const state: IHooksOptions = reactive({
-		dataListUrl: 'sys/attachment/page',
+		dataListUrl: 'sys/attachment/list',
 		deleteUrl: 'sys/attachment',
 		queryForm: {
 			businessCode: props.businessCode,
-		}
+		},
+		isPage: false
 	})
 	
 	const handleClose = () => {
 		emit('update:visible', false)
 	}
+	
+	const refreshList =() => {
+		getDataList()
+	}
+	
 	const { getDataList, sizeChangeHandle, selectionChangeHandle, sortChangeHandle, currentChangeHandle, deleteBatchHandle, reset } = useCrud(state)
 	
 </script>

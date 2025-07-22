@@ -3,5 +3,13 @@
 
 <mapper namespace="net.grape.system.dao.SysAttachmentDao">
 
+    <select id="getList" resultType="net.grape.system.vo.SysAttachmentVO">
+        select t.*,r.real_name creator_name from sys_attachment t left join sys_user r on t.creator = r.id and
+        r.deleted = 0 where t.deleted = 0
+        <if test="businessCode != null and businessCode.trim() != ''">
+            and t.business_code =  #{businessCode}
+        </if>
+
+    </select>
 
 </mapper>

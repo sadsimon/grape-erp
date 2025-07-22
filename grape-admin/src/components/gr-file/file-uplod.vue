@@ -18,7 +18,8 @@
 import { ElMessage, ElNotification, UploadProps, UploadUserFile } from 'element-plus'
 import constant from '@/utils/constant'
 import cache from '@/utils/cache'
-import { ref, watch } from 'vue'
+import { ref, watch, reactive } from 'vue'
+import { useAttachmentSubmitApi } from '@/api/sys/attachment'
 
 const props = defineProps({
 	action: {
@@ -37,6 +38,10 @@ const props = defineProps({
 	disabled: {
 		type: Boolean,
 		default: false
+	},
+	businessCode: {
+		type: String,
+		default: false
 	}
 })
 
@@ -46,17 +51,33 @@ const uploadUrl = props.action ? constant.apiUrl + props.action : constant.uploa
 const model = defineModel<any>()
 const fileList = ref<UploadUserFile[]>([])
 
-const handleSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
-	if (response.code !== 0) {
-		ElMessage.error('上传失败：' + response.msg)
+const emit = defineEmits(['afterUpload'])
+
+const dataForm = reactive({
+	name: '',
+	platform: '',
+	size: '',
+	url: '',
+	businessCode: ''
+})
+
+const handleSuccess: UploadProps['onSuccess'] = (res, file) => {
+	if (res.code !== 0) {
+		ElMessage.error('上传失败：' + res.msg)
 		return false
 	}
 
-	if (model.value) {
-		model.value = model.value + ',' + response.data.url
-	} else {
-		model.value = response.data.url
-	}
+	Object.assign(dataForm, res.data)
+	dataForm.businessCode = props.businessCode
+
+	useAttachmentSubmitApi(dataForm).then(() => {
+		ElMessage.success({
+			message: '上传成功',
+			duration: 500,
+		})
+		emit('afterUpload')
+	})
+	
 }
 
 const handleBeforeUpload: UploadProps['beforeUpload'] = rawFile => {
@@ -78,4 +99,6 @@ const handleExceed = () => {
 		type: 'warning'
 	})
 }
+
+
 </script>

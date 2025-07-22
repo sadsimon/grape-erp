@@ -34,6 +34,12 @@ public class SysAttachmentVO implements Serializable {
     @Schema(description = "存储平台")
     private String platform;
 
+    @Schema(description = "关联业务code")
+    private String businessCode;
+
+    @Schema(description = "创建人姓名")
+    private String creatorName;
+
     @Schema(description = "创建时间")
     @JsonFormat(pattern = DateUtils.DATE_TIME_PATTERN)
     private LocalDateTime createTime;

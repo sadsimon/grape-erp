@@ -16,7 +16,9 @@ import net.grape.system.vo.SysAttachmentVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 附件管理
@@ -33,6 +35,14 @@ public class SysAttachmentServiceImpl extends BaseServiceImpl<SysAttachmentDao, 
         IPage<SysAttachmentEntity> page = baseMapper.selectPage(getPage(query), getWrapper(query));
 
         return new PageResult<>(SysAttachmentConvert.INSTANCE.convertList(page.getRecords()), page.getTotal());
+    }
+
+    @Override
+    public List<SysAttachmentVO> list(String businessCode) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("businessCode", businessCode);
+        List<SysAttachmentVO> list = baseMapper.getList(params);
+        return list;
     }
 
     private LambdaQueryWrapper<SysAttachmentEntity> getWrapper(SysAttachmentQuery query) {
