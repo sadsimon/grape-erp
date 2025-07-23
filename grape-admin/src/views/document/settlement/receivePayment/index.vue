@@ -33,13 +33,13 @@
 			<el-card class="main">
 				<div style="width: 100%; display: flex;">
 					<div style="flex: 1;" />
-					<GrFile :businessCode="dataForm.documentCode" />
+					<GrFile :disabled="isfinish" :businessCode="dataForm.documentCode" />
 				</div>
 				<AccountList :isfinish="isfinish" :height="listHeight" v-model:initialData="dataForm.documentAccountDetailList"></AccountList>
 				<div style="width: 100%; display: flex; justify-content: flex-end; margin-top: 4px;">
 					<el-space>
 						<el-form-item prop="advanceInt" label="使用预收款">
-							<el-input
+							<GrNumberInput
 							v-model="dataForm.advanceInt"
 							      style="max-width: 300px"
 							      placeholder="金额"
@@ -48,7 +48,7 @@
 								  <template #append>
 								  	  余额&nbsp;<span style="color: red;">{{ balance }}</span>
 								  </template>
-							    </el-input>
+							    </GrNumberInput>
 						</el-form-item>
 					</el-space>
 				</div>			
@@ -301,6 +301,7 @@
 	const updateBalance = async ()=>{
 		if(dataForm.value.contactunitsId){
 			contactunitBalance.value = await getContactunitsAdvanceOut(dataForm.value.contactunitsId)
+			balance.value = calcChain(contactunitBalance.value).sub(dataForm.value.advanceInt).toNumber()
 		}
 	}
 	
@@ -308,15 +309,6 @@
 	  ()=>dataForm.value.advanceInt,
 	  (newAmount) => {
 	    balance.value = calcChain(contactunitBalance.value).sub(newAmount || 0).toNumber()
-	  }
-	)
-	
-	watch(
-	  ()=>contactunitBalance.value,
-	  (newBalance) => {
-	    if (newBalance) {
-	      balance.value = calcChain(newBalance).sub(dataForm.value.advanceInt).toNumber()
-	    }
 	  }
 	)
 	

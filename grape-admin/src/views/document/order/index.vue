@@ -38,7 +38,7 @@
 							<template #prepend>条码</template>
 						</el-input>
 					</div>
-					<GrFile :businessCode="dataForm.documentCode" />
+					<GrFile :disabled="isfinish" :businessCode="dataForm.documentCode" />
 				</div>
 				<List ref="detailListRef" :isfinish="isfinish" :height="listHeight" v-model:initialData="dataForm.documentDetailList"></List>
 				
@@ -50,7 +50,7 @@
 							<el-row :gutter="5">
 								<el-col :span="24" :lg="24" :md="24" :sm="24">
 									<el-form-item prop="advanceOut" label="预付款">
-										<el-input
+										<GrNumberInput
 										v-model="dataForm.advanceOut"
 										      style="max-width: 300px"
 										      placeholder="金额"
@@ -59,7 +59,7 @@
 											  <template #append>
 											  	  余额&nbsp;<span style="color: red;">{{ balance }}</span>
 											  </template>
-										    </el-input>
+										    </GrNumberInput>
 									</el-form-item>
 								</el-col>
 								<el-col v-for="(accountDetail) in dataForm.documentAccountDetailList" :span="24" :lg="8" :md="8" :sm="12">
@@ -246,6 +246,7 @@
 	const updateBalance = async ()=>{
 		if(dataForm.value.contactunitsId){
 			contactunitBalance.value = await getContactunitsAdvanceIn(dataForm.value.contactunitsId)
+			balance.value = calcChain(contactunitBalance.value).sub(dataForm.value.advanceOut).toNumber()
 		}
 	}
 	
@@ -253,15 +254,6 @@
 	  ()=>dataForm.value.advanceOut,
 	  (newAmount) => {
 	    balance.value = calcChain(contactunitBalance.value).sub(newAmount || 0).toNumber()
-	  }
-	)
-	
-	watch(
-	  ()=>contactunitBalance.value,
-	  (newBalance) => {
-	    if (newBalance) {
-	      balance.value = calcChain(newBalance).sub(dataForm.value.advanceOut).toNumber()
-	    }
 	  }
 	)
 	

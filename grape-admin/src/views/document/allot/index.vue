@@ -35,7 +35,7 @@
 							<template #prepend>条码</template>
 						</el-input>
 					</div>
-					<GrFile :businessCode="dataForm.documentCode" />
+					<GrFile :disabled="isfinish" :businessCode="dataForm.documentCode" />
 				</div>
 				
 				<List ref="detailListRef" :isfinish="isfinish" :height="listHeight" v-model:initialData="dataForm.documentDetailList"></List>

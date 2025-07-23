@@ -1,5 +1,9 @@
 <template>
-	<el-input v-model="model" :disabled @input="handleInput" @blur="handleBlur"> </el-input>
+	<el-input v-model="model" :disabled @input="handleInput" @blur="handleBlur"> 
+	<template #append v-if="$slots.append">
+		<slot name="append"></slot>
+	</template>
+	</el-input>
 </template>
 
 <script setup lang="ts" name="GrNumberInput">

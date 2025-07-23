@@ -33,7 +33,7 @@
 			<el-card class="main">
 				<div style="width: 100%; display: flex;">
 					<div style="flex: 1;" />
-					<GrFile :businessCode="dataForm.documentCode" />
+					<GrFile :disabled="isfinish" :businessCode="dataForm.documentCode" />
 				</div>
 				<IncomeExpendList :amountType="amountType" :isfinish="isfinish" :height="listHeight" v-model:initialData="dataForm.documentDetailList"></IncomeExpendList>
 			</el-card>
