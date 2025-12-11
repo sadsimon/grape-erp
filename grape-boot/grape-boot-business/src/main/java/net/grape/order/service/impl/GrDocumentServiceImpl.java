@@ -189,8 +189,7 @@ public class GrDocumentServiceImpl extends BaseServiceImpl<GrDocumentMapper, GrD
     public void delete(List<Long> idList) {
         for(Long id : idList){
             //回退库存
-            GrDocumentEntity entity = getById(id);
-            Document document = ExecuteFactory.getDocument(GrDocumentConvert.INSTANCE.convert(entity));
+            Document document = ExecuteFactory.getDocument(getDocumentById(id));
             returnStock(id,document.getDocumentConfig().getIsNeedStock());
             //回退预付款、预收款
             returnAdvance(id,document.getDocumentConfig().getDocumentVO().getContactunitsId(),document.getDocumentConfig().getDocumentVO().getDocumentType());
